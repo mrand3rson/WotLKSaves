@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="class_colors">
+        <item>@color/color_mage</item>
+        <item>@color/color_warlock</item>
+        <item>@color/color_priest</item>
+        <item>@color/color_rogue</item>
+        <item>@color/color_druid</item>
+        <item>@color/color_shaman</item>
+        <item>@color/color_hunter</item>
+        <item>@color/color_darkknight</item>
+        <item>@color/color_paladin</item>
+        <item>@color/color_warrior</item>
+    </array>
+</resources>

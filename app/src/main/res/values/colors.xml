@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#FFFFD600</color>
+    <color name="colorPrimaryDark">#FFFFB300</color>
+    <color name="colorAccent">#FF0026FF</color>
+
+    <color name="colorHint">@android:color/darker_gray</color>
+
+    <color name="colorNavMenuChecked">#000000</color>
+    <color name="colorNavMenuIconChecked">#000000</color>
+    <color name="colorNavMenuUnchecked">#bdbdbd</color>
+
+    <color name="colorRecyclerCharsItemBackground">#e0e0e0</color>
+
+    <color name="color_mage">#90caf9</color>
+    <color name="color_warlock">#b39ddb</color>
+    <color name="color_priest">#ffffff</color>
+    <color name="color_rogue">#eeff41</color>
+    <color name="color_druid">#ffb300</color>
+    <color name="color_shaman">#3d5afe</color>
+    <color name="color_hunter">#aed581</color>
+    <color name="color_darkknight">#c62828</color>
+    <color name="color_paladin">#f48fb1</color>
+    <color name="color_warrior">#b7955f</color>
+
+    <!--#827717-->
+    <!--<color name="colorPrimary">#3F51B5</color>-->
+    <!--<color name="colorPrimaryDark">#303F9F</color>-->
+    <!--<color name="colorAccent">#FF4081</color>-->
+</resources>
