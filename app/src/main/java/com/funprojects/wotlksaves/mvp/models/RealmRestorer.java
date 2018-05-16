@@ -14,30 +14,26 @@ import java.io.IOException;
 
 public class RealmRestorer {
 
-    public final static String EXPORT_REALM_PATH =
+    private final static String EXPORT_REALM_PATH =
             Environment.getExternalStorageDirectory().getPath().concat("/sample.realm");
-    public final static String IMPORT_REALM_NAME = "default.realm";
+    private final static String IMPORT_REALM_NAME = "default.realm";
 
 
-    public static void restore(Context applicationContext) {
+    public static void restore(Context applicationContext) throws IOException {
         copyRealmFromBackup(applicationContext, EXPORT_REALM_PATH, IMPORT_REALM_NAME);
     }
 
-    private static void copyRealmFromBackup(Context applicationContext, String oldFilePath, String outFileName) {
-        try {
-            File file = new File(applicationContext.getFilesDir(), outFileName);
+    private static void copyRealmFromBackup(Context applicationContext, String oldFilePath, String outFileName) throws IOException {
+        File file = new File(applicationContext.getFilesDir(), outFileName);
 
-            FileOutputStream outputStream = new FileOutputStream(file);
-            FileInputStream inputStream = new FileInputStream(new File(oldFilePath));
+        FileOutputStream outputStream = new FileOutputStream(file);
+        FileInputStream inputStream = new FileInputStream(new File(oldFilePath));
 
-            byte[] buf = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buf)) > 0) {
-                outputStream.write(buf, 0, bytesRead);
-            }
-            outputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        byte[] buf = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = inputStream.read(buf)) > 0) {
+            outputStream.write(buf, 0, bytesRead);
         }
+        outputStream.close();
     }
 }

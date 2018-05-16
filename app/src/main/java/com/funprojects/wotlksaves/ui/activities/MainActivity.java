@@ -1,11 +1,11 @@
 package com.funprojects.wotlksaves.ui.activities;
 
 import android.app.DialogFragment;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -37,6 +37,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     GameRealm mGameRealm;
+
+    @BindView(R.id.fab_add)
+    FloatingActionButton fab;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -118,6 +121,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
+
+        fab.setOnClickListener(null);
+        fab.setVisibility(View.INVISIBLE);
+
         if (id == R.id.nav_characters) {
             CharactersFragment fragment = CharactersFragment.newInstance(mGameRealm);
             getSupportFragmentManager().beginTransaction()
@@ -126,10 +133,18 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_find) {
             Toast.makeText(this, "NOT YET IMPLEMENTED", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_contacts) {
-            ContactsFragment fragment = new ContactsFragment();
+            final ContactsFragment fragment = new ContactsFragment();
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, fragment)
                     .commit();
+
+            fab.setVisibility(View.VISIBLE);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    fragment.addToList();
+                }
+            });
         } else if (id == R.id.nav_share_blacklist) {
             Toast.makeText(this, "NOT YET IMPLEMENTED", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_share_whitelist) {

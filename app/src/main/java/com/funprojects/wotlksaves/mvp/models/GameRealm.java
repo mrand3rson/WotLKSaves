@@ -3,7 +3,7 @@ package com.funprojects.wotlksaves.mvp.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.List;
+import java.util.Locale;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -35,25 +35,59 @@ public class GameRealm extends RealmObject implements Parcelable {
     public String getName() {
         return mName;
     }
+
     public String getServerName() {
         return mServerName;
     }
-
     public void setServerName(String serverName) {
         this.mServerName = serverName;
     }
+
+    public RealmList<BlacklistRecord> getBlacklist() {
+        if (mBlacklist == null) {
+            mBlacklist = new RealmList<>();
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+
+            RealmResults<BlacklistRecord> realmResults =
+                    realm.where(BlacklistRecord.class).findAll();
+
+            realm.commitTransaction();
+            realm.close();
+            mBlacklist.addAll(realmResults);
+        }
+        return mBlacklist;
+    }
+    public RealmList<BlacklistRecord> getWhitelist() {
+        if (mWhitelist == null) {
+            mWhitelist = new RealmList<>();
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+
+            RealmResults<WhitelistRecord> realmResults =
+                    realm.where(WhitelistRecord.class).findAll();
+
+            realm.commitTransaction();
+            realm.close();
+            mWhitelist.addAll(realmResults);
+        }
+        return mBlacklist;
+    }
+
+
     @PrimaryKey @Index
     public long id;
     private String mName;
     private String mServerName;
+
     private RealmList<BlacklistRecord> mBlacklist;
-
-
     private RealmList<WhitelistRecord> mWhitelist;
+
 
     public GameRealm() {
 
     }
+
 
     public GameRealm(String name) {
         this.mName = name;
@@ -67,38 +101,12 @@ public class GameRealm extends RealmObject implements Parcelable {
 
     @Override
     public String toString() {
-        return String.format("%s %s (%d)", mServerName, mName, id);
+        return String.format(Locale.getDefault(), "%s %s (%d)", mServerName, mName, id);
     }
 
-
-    public List<BlacklistRecord> getBlacklist() {
-        //TODO: find a way to fix
-        if (mBlacklist == null) {
-            mBlacklist = new RealmList<>();
-            for (BlacklistRecord record : getBlacklistOld()) {
-                mBlacklist.add(record);
-            }
-        }
-        return mBlacklist;
-    }
-
-    public List<BlacklistRecord> getBlacklistOld() {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-
-        RealmResults<BlacklistRecord> realmResults =
-                realm.where(BlacklistRecord.class).findAll();
-
-        realm.commitTransaction();
-        return realm.copyFromRealm(realmResults);
-    }
-
-    public List<BlacklistRecord> getWhitelist() {
-        Realm realm = Realm.getDefaultInstance();
-        return realm.copyFromRealm(mBlacklist);
-    }
-
-
+    //
+    //PARCELABLE IMPLEMENTATION
+    //
     @Override
     public int describeContents() {
         return 0;

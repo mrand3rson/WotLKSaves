@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.funprojects.wotlksaves.R;
 import com.funprojects.wotlksaves.mvp.models.BlacklistRecord;
@@ -71,4 +72,9 @@ public class ContactsBlacklistFragment extends TabFragment {
         }
     }
 
+    @Override
+    public void addRecord() {
+        //TODO: add blacklist record logic
+        Toast.makeText(getActivity(), "BLACK", Toast.LENGTH_SHORT).show();
+    }
 }

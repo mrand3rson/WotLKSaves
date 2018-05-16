@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.funprojects.wotlksaves.R;
@@ -14,6 +15,7 @@ import com.funprojects.wotlksaves.mvp.models.BlacklistRecord;
 
 import java.util.List;
 
+import butterknife.BindDimen;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -52,8 +54,11 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.View
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
+        @BindDimen(R.dimen.activity_horizontal_margin)
+        int horizontalMargin;
+
         @BindView(R.id.black_layout)
-        LinearLayout layoutView;
+        RelativeLayout layoutView;
 
         @BindView(R.id.black_nickname)
         TextView nicknameView;
@@ -69,21 +74,45 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.View
 
         private void bind(BlacklistRecord blacklistRecord) {
             this.setIsRecyclable(false);
-            LinearLayout.LayoutParams params =
-                    new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.gravity = Gravity.CENTER_HORIZONTAL;
-
             nicknameView.setText(blacklistRecord.getName());
             counterView.setText(String.valueOf(
                     blacklistRecord.getTimesCaught()
             ));
-            for (String reason : blacklistRecord.getReasons()) {
+
+            //adding LinearLayout (in future with TextView reasons)
+            LinearLayout reasonsLayout = prepareReasonsLayout();
+            layoutView.addView(reasonsLayout);
+
+            fillReasonsLayout(reasonsLayout, blacklistRecord.getReasons());
+        }
+
+        private LinearLayout prepareReasonsLayout() {
+            RelativeLayout.LayoutParams relativeParams =
+                    new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT);
+            relativeParams.addRule(RelativeLayout.ALIGN_START, R.id.black_title_layout);
+            relativeParams.addRule(RelativeLayout.BELOW, R.id.black_title_layout);
+            relativeParams.leftMargin = horizontalMargin;
+            relativeParams.rightMargin = horizontalMargin;
+
+            LinearLayout reasonsLayout = new LinearLayout(mContext);
+            reasonsLayout.setLayoutParams(relativeParams);
+            reasonsLayout.setOrientation(LinearLayout.VERTICAL);
+
+            return reasonsLayout;
+        }
+
+        private void fillReasonsLayout(LinearLayout reasonsLayout, List<String> reasons) {
+            LinearLayout.LayoutParams reasonParams =
+                    new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT);
+            for (String reason : reasons) {
                 TextView reasonView = new TextView(mContext);
-                reasonView.setLayoutParams(params);
+                reasonView.setLayoutParams(reasonParams);
                 reasonView.setText(reason);
-                layoutView.addView(reasonView);
+                reasonsLayout.addView(reasonView);
             }
         }
     }
 }
+

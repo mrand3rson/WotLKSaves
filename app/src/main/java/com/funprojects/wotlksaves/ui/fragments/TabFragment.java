@@ -23,4 +23,7 @@ public abstract class TabFragment extends Fragment {
     public TabFragment(int position) {
         mTabPosition = position;
     }
+
+
+    public abstract void addRecord();
 }

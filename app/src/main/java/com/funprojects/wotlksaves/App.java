@@ -1,21 +1,18 @@
 package com.funprojects.wotlksaves;
 
 import android.app.Application;
-import android.os.Environment;
+import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.funprojects.wotlksaves.mvp.models.GameRealm;
 import com.funprojects.wotlksaves.mvp.models.RealmMigrations;
 import com.funprojects.wotlksaves.mvp.models.RealmRestorer;
 import com.funprojects.wotlksaves.mvp.models.Server;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-
-import static com.funprojects.wotlksaves.mvp.models.RealmRestorer.IMPORT_REALM_NAME;
 
 /**
  * Created by Andrei on 17.04.2018.
@@ -24,6 +21,7 @@ import static com.funprojects.wotlksaves.mvp.models.RealmRestorer.IMPORT_REALM_N
 public class App extends Application {
 
     public final static int DB_VERSION = 7;
+    private final static String FIRST_LAUNCH = "FIRST_LAUNCH";
 
 
     @Override
@@ -35,35 +33,33 @@ public class App extends Application {
     }
 
     public void restoreSchemaVersion() {
-        if (isNeededInit()) { //add check if first launch
-            RealmConfiguration configuration = new RealmConfiguration.Builder()
-                    .migration(new RealmMigrations())
-                    .schemaVersion(DB_VERSION)
-                    .build();
-            RealmRestorer.restore(getApplicationContext());
-
+        RealmConfiguration configuration = new RealmConfiguration.Builder()
+                .migration(new RealmMigrations())
+                .schemaVersion(DB_VERSION)
+                .build();
+        if (isNeededInit()) {
+            try {
+                RealmRestorer.restore(getApplicationContext());
+                Realm.setDefaultConfiguration(configuration);
+                initGameRealm();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Realm.setDefaultConfiguration(configuration);
+            }
+        } else {
             Realm.setDefaultConfiguration(configuration);
-            initGameRealm();
-//            try {
-//                Realm.migrateRealm(configuration);
-//                initGameRealm();
-//            } catch (FileNotFoundException e) {
-//                e.printStackTrace();
-//            }
         }
     }
 
     private boolean isNeededInit() {
-//        Realm realm = Realm.getDefaultInstance();
-//        realm.beginTransaction();
-//
-//        GameRealm wowCircleX5 = realm.where(GameRealm.class)
-//                .equalTo("id", 1)
-//                .findFirst();
-//        realm.commitTransaction();
-//
-//        return wowCircleX5 == null;
-        return true;
+        SharedPreferences preferences = getSharedPreferences("com.funprojects.wotlksaves", Context.MODE_PRIVATE);
+        if (!preferences.getBoolean(FIRST_LAUNCH, false)) {
+            preferences.edit()
+                    .putBoolean(FIRST_LAUNCH, true)
+                    .apply();
+            return true;
+        }
+        return false;
     }
 
     private void initGameRealm() {

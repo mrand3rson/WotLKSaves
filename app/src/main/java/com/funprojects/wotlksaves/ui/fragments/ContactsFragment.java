@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.funprojects.wotlksaves.R;
-import com.funprojects.wotlksaves.ui.activities.MainActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -64,12 +63,20 @@ public class ContactsFragment extends Fragment {
 
 //        ((MainActivity)getActivity()).setSupportActionBar(toolbar);
 
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getActivity().getSupportFragmentManager());
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         TabLayout.OnTabSelectedListener onTabSelectedListener = new TabLayout.ViewPagerOnTabSelectedListener(mViewPager);
-//        tabLayout.addOnTabSelectedListener(onTabSelectedListener);
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.addOnTabSelectedListener(onTabSelectedListener);
         return v;
+    }
+
+    public void addToList() {
+        int position = tabLayout.getSelectedTabPosition();
+        TabFragment tabFragment =
+                (TabFragment) mSectionsPagerAdapter.getItem(position);
+        tabFragment.addRecord();
     }
 
 
