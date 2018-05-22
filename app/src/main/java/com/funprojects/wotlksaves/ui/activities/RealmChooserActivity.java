@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import com.arellomobile.mvp.MvpActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.funprojects.wotlksaves.App;
 import com.funprojects.wotlksaves.R;
 import com.funprojects.wotlksaves.mvp.models.GameRealm;
 import com.funprojects.wotlksaves.mvp.models.Server;
@@ -65,7 +64,7 @@ public class RealmChooserActivity extends MvpActivity implements ServerChooserVi
     public void confirmServer() {
         GameRealm selectedRealm = mAdapter.getItem(mGameRealmsSpinner.getSelectedItemPosition());
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra(ARG_REALM, selectedRealm);
+        intent.putExtra(ARG_REALM, selectedRealm.id);
         startActivity(intent);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             overridePendingTransition(R.anim.enter_right_in, R.anim.exit_left_out);

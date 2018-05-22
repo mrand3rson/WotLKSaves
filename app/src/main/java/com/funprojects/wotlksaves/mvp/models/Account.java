@@ -17,7 +17,8 @@ public class Account extends RealmObject {
 
     private long setIdIncremented() {
         Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
+        if (!realm.isInTransaction())
+            realm.beginTransaction();
 
         Number maxId = realm.where(this.getClass())
                 .max("id");

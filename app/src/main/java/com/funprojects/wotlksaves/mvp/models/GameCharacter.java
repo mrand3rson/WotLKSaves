@@ -17,6 +17,22 @@ import io.realm.annotations.PrimaryKey;
 
 public class GameCharacter extends RealmObject implements Parcelable, ICharacter {
 
+    private long setIdIncremented() {
+        Realm realm = Realm.getDefaultInstance();
+        if (!realm.isInTransaction())
+            realm.beginTransaction();
+
+        Number maxId = realm.where(this.getClass())
+                .max("id");
+
+        realm.commitTransaction();
+
+
+        return (maxId != null ?
+                maxId.longValue() + 1 :
+                1);
+    }
+
     public String getNickname() {
         return mNickname;
     }
@@ -72,14 +88,13 @@ public class GameCharacter extends RealmObject implements Parcelable, ICharacter
 
     }
 
-    public GameCharacter(long id,
-                         String nickname,
+    public GameCharacter(String nickname,
                          byte gameRace,
                          byte gameClass,
                          byte level,
                          byte spec1,
                          byte spec2) {
-        this.id = id;
+        this.id = setIdIncremented();
         this.mNickname = nickname;
         this.mGameRace = gameRace;
         this.mGameClass = gameClass;

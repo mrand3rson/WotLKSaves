@@ -5,7 +5,6 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
-import io.realm.RealmResults;
 import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
 
@@ -15,6 +14,21 @@ import io.realm.annotations.PrimaryKey;
 
 public class BlacklistRecord extends RealmObject {
 
+    private long setIdIncremented() {
+        Realm realm = Realm.getDefaultInstance();
+        if (!realm.isInTransaction())
+            realm.beginTransaction();
+
+        Number maxId = realm.where(this.getClass())
+                .max("id");
+
+        realm.commitTransaction();
+
+        return (maxId != null ?
+                maxId.longValue() + 1 :
+                1);
+    }
+
     //unused, but needed for transfering from WowSchedule
     public String getReason() {
         return reason;
@@ -23,14 +37,14 @@ public class BlacklistRecord extends RealmObject {
 
 
     public String getName() {
-        return name;
+        return mName;
     }
     public RealmList<String> getReasons() {
-        return reasons;
+        return mReasons;
     }
 
     public int getTimesCaught() {
-        return timesCaught;
+        return mTimesCaught;
     }
 
     public long getGameRealmId() {
@@ -43,9 +57,9 @@ public class BlacklistRecord extends RealmObject {
 
     @PrimaryKey @Index
     public long id;
-    private String name;
-    private RealmList<String> reasons;
-    private int timesCaught;
+    private String mName;
+    private RealmList<String> mReasons;
+    private int mTimesCaught;
 
     private long mGameRealmId;
 
@@ -55,8 +69,9 @@ public class BlacklistRecord extends RealmObject {
     }
 
     public BlacklistRecord(String name, List<String> reasons, int timesCaught) {
-        this.name = name;
-        this.reasons = (RealmList<String>) reasons;
-        this.timesCaught = timesCaught;
+        this.id = setIdIncremented();
+        this.mName = name;
+        this.mReasons = (RealmList<String>) reasons;
+        this.mTimesCaught = timesCaught;
     }
 }

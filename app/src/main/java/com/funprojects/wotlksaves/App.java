@@ -20,7 +20,7 @@ import io.realm.RealmConfiguration;
 
 public class App extends Application {
 
-    public final static int DB_VERSION = 8;
+    public final static int DB_VERSION = 10;
     private final static String FIRST_LAUNCH = "FIRST_LAUNCH";
 
 
@@ -68,7 +68,6 @@ public class App extends Application {
 
         Server server = new Server("WoWCircle");
         GameRealm gameRealm = new GameRealm("x5", "WoWCircle");
-        gameRealm.id = 1;
 
         if (realm.where(Server.class)
                 .equalTo("mName", "WoWCircle")
@@ -78,6 +77,5 @@ public class App extends Application {
         realm.copyToRealm(gameRealm);
 
         realm.commitTransaction();
-        realm.close();
     }
 }

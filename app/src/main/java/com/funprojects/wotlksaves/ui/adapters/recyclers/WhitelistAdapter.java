@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.funprojects.wotlksaves.R;
 import com.funprojects.wotlksaves.mvp.models.WhitelistRecord;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindDimen;
@@ -27,12 +28,13 @@ import butterknife.ButterKnife;
 public class WhitelistAdapter extends RecyclerView.Adapter<WhitelistAdapter.ViewHolder> {
 
     private Context mContext;
-    private List<WhitelistRecord> mData;
+
+    public ArrayList<WhitelistRecord> data;
 
 
-    public WhitelistAdapter(Context context, List<WhitelistRecord> data) {
+    public WhitelistAdapter(Context context, ArrayList<WhitelistRecord> data) {
         mContext = context;
-        mData = data;
+        this.data = data;
     }
 
     @Override
@@ -44,12 +46,12 @@ public class WhitelistAdapter extends RecyclerView.Adapter<WhitelistAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.bind(mData.get(position));
+        holder.bind(data.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return mData.size();
+        return data.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -92,8 +94,8 @@ public class WhitelistAdapter extends RecyclerView.Adapter<WhitelistAdapter.View
             RelativeLayout.LayoutParams relativeParams =
                     new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT);
-            relativeParams.addRule(RelativeLayout.ALIGN_START, R.id.black_title_layout);
-            relativeParams.addRule(RelativeLayout.BELOW, R.id.black_title_layout);
+            relativeParams.addRule(RelativeLayout.ALIGN_START, R.id.white_title_layout);
+            relativeParams.addRule(RelativeLayout.BELOW, R.id.white_title_layout);
             relativeParams.leftMargin = horizontalMargin;
             relativeParams.rightMargin = horizontalMargin;
 

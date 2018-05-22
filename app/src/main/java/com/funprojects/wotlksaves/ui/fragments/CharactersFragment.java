@@ -2,9 +2,13 @@ package com.funprojects.wotlksaves.ui.fragments;
 
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +21,7 @@ import com.funprojects.wotlksaves.mvp.models.GameCharacter;
 import com.funprojects.wotlksaves.mvp.models.GameRealm;
 import com.funprojects.wotlksaves.mvp.presenters.CharactersPresenter;
 import com.funprojects.wotlksaves.mvp.views.CharactersView;
+import com.funprojects.wotlksaves.ui.activities.MainActivity;
 import com.funprojects.wotlksaves.ui.adapters.recyclers.CharacterAdapter;
 import com.funprojects.wotlksaves.ui.adapters.recyclers.VerticalSpaceItemDecoration;
 
@@ -37,6 +42,12 @@ public class CharactersFragment extends MvpAppCompatFragment implements Characte
 
     @BindDimen(R.dimen.recycler_item_vertical_space)
     int mVerticalSpacing;
+
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
+    @BindView(R.id.fab_add_character)
+    FloatingActionButton fab;
 
     @BindView(R.id.recycler)
     RecyclerView mRecycler;
@@ -74,8 +85,21 @@ public class CharactersFragment extends MvpAppCompatFragment implements Characte
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_characters, container, false);
+        View v = inflater.inflate(R.layout.app_bar_characters, container, false);
+
         ButterKnife.bind(this, v);
+
+
+        MainActivity activity = (MainActivity) getActivity();
+        toolbar = v.findViewById(R.id.toolbar);
+        activity.setSupportActionBar(toolbar);
+
+        DrawerLayout drawer = activity.findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                activity, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
         initRecycler();
         return v;
     }

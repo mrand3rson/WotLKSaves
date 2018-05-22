@@ -116,4 +116,6 @@
     <string name="label_ellipsis">…</string>
     <string name="string_enter_nickname">Enter nickname:</string>
     <string name="string_enter_reason">Enter reason:</string>
+    <string name="string_search">Search</string>
+    <string name="string_sort">Sort</string>
 </resources>

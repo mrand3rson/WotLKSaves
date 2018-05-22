@@ -2,7 +2,6 @@ package com.funprojects.wotlksaves.ui.adapters.recyclers;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +12,7 @@ import android.widget.TextView;
 import com.funprojects.wotlksaves.R;
 import com.funprojects.wotlksaves.mvp.models.BlacklistRecord;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindDimen;
@@ -26,12 +26,12 @@ import butterknife.ButterKnife;
 public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.ViewHolder> {
 
     private Context mContext;
-    private List<BlacklistRecord> mData;
+    public ArrayList<BlacklistRecord> data;
 
 
-    public BlacklistAdapter(Context context, List<BlacklistRecord> data) {
+    public BlacklistAdapter(Context context, ArrayList<BlacklistRecord> data) {
         this.mContext = context;
-        this.mData = data;
+        this.data = data;
     }
 
 
@@ -44,12 +44,12 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.bind(mData.get(position));
+        holder.bind(data.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return mData.size();
+        return data.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

@@ -113,15 +113,10 @@ public class RealmMigrations implements RealmMigration {
                     .addIndex("name")
                     .addPrimaryKey("name")
                     .addRealmListField("reasons", String.class)
-//            transferReasonToReasons();
-//            schema.get("BlacklistRecord")
-                    .transform(new RealmObjectSchema.Function() {
-                        @Override
-                        public void apply(DynamicRealmObject obj) {
-                            String reasonText = obj.getString("reason");
-                            RealmList<String> migratedReasons = obj.getList("reasons", String.class);
-                            migratedReasons.add(reasonText);
-                        }
+                    .transform(obj -> {
+                        String reasonText = obj.getString("reason");
+                        RealmList<String> migratedReasons = obj.getList("reasons", String.class);
+                        migratedReasons.add(reasonText);
                     });
             schema.get("BlacklistRecord")
                     .addField("timesCaught", int.class);
@@ -169,6 +164,7 @@ public class RealmMigrations implements RealmMigration {
             currentVersion++;
         }
 
+        //altered GameRealm (Blacklist+Whitelist)
         if (currentVersion < 6) {
             schema.get("GameRealm")
                     .addRealmListField("mBlacklist", schema.get("BlacklistRecord"))
@@ -177,6 +173,7 @@ public class RealmMigrations implements RealmMigration {
             currentVersion++;
         }
 
+        //altered Account, GameRealm, BlacklistRecord (added id
         if (currentVersion < 7) {
             schema.get("Account")
                     .removePrimaryKey()
@@ -213,6 +210,11 @@ public class RealmMigrations implements RealmMigration {
                         }
                     })
                     .addPrimaryKey("id");
+            schema.get("WhitelistRecord")
+                    .removePrimaryKey()
+                    .addField("id", long.class)
+                    .addField("mGameRealmId", long.class)
+                    .addPrimaryKey("id");
 
             currentVersion++;
         }
@@ -221,6 +223,51 @@ public class RealmMigrations implements RealmMigration {
             schema.get("WhitelistRecord")
                     .addRealmListField("mReasons", String.class)
                     .removeField("mReason");
+        }
+
+        if (currentVersion < 9) {
+            schema.get("Instances")
+                    .addRealmListField("saves", Boolean.class)
+                    .removeField("naxx10")
+                    .removeField("naxx25")
+                    .removeField("os10")
+                    .removeField("os25")
+                    .removeField("ulduar10")
+                    .removeField("ulduar25")
+                    .removeField("onyxia10")
+                    .removeField("onyxia25")
+                    .removeField("va10")
+                    .removeField("va25")
+                    .removeField("toc10")
+                    .removeField("togc10")
+                    .removeField("toc25")
+                    .removeField("togc25")
+                    .removeField("icc10")
+                    .removeField("icc10h")
+                    .removeField("icc25")
+                    .removeField("icc25h")
+                    .removeField("rs10")
+                    .removeField("rs10h")
+                    .removeField("rs25")
+                    .removeField("rs25h");
+        }
+
+        if (currentVersion < 10) {
+            schema.get("BlacklistRecord")
+                    .addField("mName", String.class)
+                    .addRealmListField("mReasons", String.class)
+                    .addField("mTimesCaught", int.class)
+                    .transform(new RealmObjectSchema.Function() {
+                        @Override
+                        public void apply(DynamicRealmObject obj) {
+                            obj.setString("mName", obj.getString("name"));
+                            obj.setList("mReasons", obj.getList("reasons", String.class));
+                            obj.setInt("mTimesCaught", obj.getInt("timesCaught"));
+                        }
+                    })
+                    .removeField("name")
+                    .removeField("reasons")
+                    .removeField("timesCaught");
         }
     }
 }

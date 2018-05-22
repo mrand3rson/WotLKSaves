@@ -5,29 +5,25 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.funprojects.wotlksaves.R;
 import com.funprojects.wotlksaves.mvp.models.BlacklistRecord;
 import com.funprojects.wotlksaves.mvp.models.GameRealm;
+import com.funprojects.wotlksaves.mvp.models.WhitelistRecord;
 import com.funprojects.wotlksaves.ui.dialogs.AddCharacterDialog;
 import com.funprojects.wotlksaves.ui.fragments.CharactersFragment;
 import com.funprojects.wotlksaves.ui.fragments.ContactsFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
 
 import static com.funprojects.wotlksaves.tools.Constraints.ARG_REALM;
 
@@ -40,12 +36,6 @@ public class MainActivity extends AppCompatActivity
 
     GameRealm mGameRealm;
     ContactsFragment contactsFragment;
-
-    @BindView(R.id.fab_add)
-    FloatingActionButton fab;
-
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
 
     @BindView(R.id.nav_view)
     NavigationView mNavigationView;
@@ -73,19 +63,10 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mGameRealm = getIntent().getParcelableExtra(ARG_REALM);
-
+        long id = getIntent().getLongExtra(ARG_REALM, -1);
+        mGameRealm = GameRealm.byId(id);
         ButterKnife.bind(this);
 
-
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
 
         mNavigationView = findViewById(R.id.nav_view);
         setupNavigationViewLabels(mNavigationView);
@@ -104,12 +85,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
 //        int id = item.getItemId();
@@ -125,9 +100,6 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
-        fab.setOnClickListener(null);
-        fab.setVisibility(View.INVISIBLE);
-
         if (id == R.id.nav_characters) {
             CharactersFragment fragment = CharactersFragment.newInstance(mGameRealm);
             getSupportFragmentManager().beginTransaction()
@@ -140,14 +112,6 @@ public class MainActivity extends AppCompatActivity
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, contactsFragment)
                     .commit();
-
-            fab.setVisibility(View.VISIBLE);
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    contactsFragment.addToList();
-                }
-            });
         } else if (id == R.id.nav_share_blacklist) {
             Toast.makeText(this, "NOT YET IMPLEMENTED", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_share_whitelist) {
@@ -176,8 +140,29 @@ public class MainActivity extends AppCompatActivity
                 .commit();
     }
 
-    public void updateBlacklist(BlacklistRecord record) {
-        mGameRealm.getBlacklist().add(record);
-        contactsFragment.updateList();
+    public void addToBlacklist(BlacklistRecord record) {
+        if (record != null) {
+            Realm realm = Realm.getDefaultInstance();
+            if (!realm.isInTransaction())
+                realm.beginTransaction();
+
+            mGameRealm.getBlacklist().add(record);
+
+            realm.commitTransaction();
+            contactsFragment.updateList(mGameRealm.getBlacklist());
+        }
+    }
+
+    public void addToWhitelist(WhitelistRecord record) {
+        if (record != null) {
+            Realm realm = Realm.getDefaultInstance();
+            if (!realm.isInTransaction())
+                realm.beginTransaction();
+
+            mGameRealm.getWhitelist().add(record);
+
+            realm.commitTransaction();
+            contactsFragment.updateList(mGameRealm.getWhitelist());
+        }
     }
 }
