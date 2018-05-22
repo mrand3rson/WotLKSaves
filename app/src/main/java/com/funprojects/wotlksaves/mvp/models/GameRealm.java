@@ -58,7 +58,7 @@ public class GameRealm extends RealmObject implements Parcelable {
         }
         return mBlacklist;
     }
-    public RealmList<BlacklistRecord> getWhitelist() {
+    public RealmList<WhitelistRecord> getWhitelist() {
         if (mWhitelist == null) {
             mWhitelist = new RealmList<>();
             Realm realm = Realm.getDefaultInstance();
@@ -71,7 +71,7 @@ public class GameRealm extends RealmObject implements Parcelable {
             realm.close();
             mWhitelist.addAll(realmResults);
         }
-        return mBlacklist;
+        return mWhitelist;
     }
 
 

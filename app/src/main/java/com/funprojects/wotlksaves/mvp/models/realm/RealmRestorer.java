@@ -1,4 +1,4 @@
-package com.funprojects.wotlksaves.mvp.models;
+package com.funprojects.wotlksaves.mvp.models.realm;
 
 import android.content.Context;
 import android.os.Environment;

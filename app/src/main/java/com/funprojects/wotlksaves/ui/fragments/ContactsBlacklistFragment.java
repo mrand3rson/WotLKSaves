@@ -1,6 +1,7 @@
 package com.funprojects.wotlksaves.ui.fragments;
 
 
+import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,7 @@ import com.funprojects.wotlksaves.mvp.models.BlacklistRecord;
 import com.funprojects.wotlksaves.ui.activities.MainActivity;
 import com.funprojects.wotlksaves.ui.adapters.recyclers.BlacklistAdapter;
 import com.funprojects.wotlksaves.ui.adapters.recyclers.VerticalSpaceItemDecoration;
+import com.funprojects.wotlksaves.ui.dialogs.AddBlacklistDialog;
 
 import java.util.List;
 
@@ -74,7 +76,17 @@ public class ContactsBlacklistFragment extends TabFragment {
 
     @Override
     public void addRecord() {
+        AddBlacklistDialog dialog = new AddBlacklistDialog();
+        dialog.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme_Dialog_Light);
+        getFragmentManager().beginTransaction()
+                .add(dialog, String.valueOf(dialog.getId()))
+                .commit();
         //TODO: add blacklist record logic
         Toast.makeText(getActivity(), "BLACK", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void updateList() {
+        mAdapter.notifyDataSetChanged();
     }
 }

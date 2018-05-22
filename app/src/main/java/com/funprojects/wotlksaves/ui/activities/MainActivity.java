@@ -11,6 +11,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.funprojects.wotlksaves.R;
+import com.funprojects.wotlksaves.mvp.models.BlacklistRecord;
 import com.funprojects.wotlksaves.mvp.models.GameRealm;
 import com.funprojects.wotlksaves.ui.dialogs.AddCharacterDialog;
 import com.funprojects.wotlksaves.ui.fragments.CharactersFragment;
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     GameRealm mGameRealm;
+    ContactsFragment contactsFragment;
 
     @BindView(R.id.fab_add)
     FloatingActionButton fab;
@@ -133,16 +136,16 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_find) {
             Toast.makeText(this, "NOT YET IMPLEMENTED", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_contacts) {
-            final ContactsFragment fragment = new ContactsFragment();
+            contactsFragment = new ContactsFragment();
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, fragment)
+                    .replace(R.id.container, contactsFragment)
                     .commit();
 
             fab.setVisibility(View.VISIBLE);
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    fragment.addToList();
+                    contactsFragment.addToList();
                 }
             });
         } else if (id == R.id.nav_share_blacklist) {
@@ -171,5 +174,10 @@ public class MainActivity extends AppCompatActivity
         getSupportFragmentManager().beginTransaction()
                 .add(dialog, null)
                 .commit();
+    }
+
+    public void updateBlacklist(BlacklistRecord record) {
+        mGameRealm.getBlacklist().add(record);
+        contactsFragment.updateList();
     }
 }

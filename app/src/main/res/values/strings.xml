@@ -111,8 +111,9 @@
     <string name="label_add_level">Level:</string>
     <string name="label_add_specs">Specs:</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="tab_text_1">Blacklist</string>
     <string name="tab_text_2">Whitelist</string>
+    <string name="label_ellipsis">…</string>
+    <string name="string_enter_nickname">Enter nickname:</string>
+    <string name="string_enter_reason">Enter reason:</string>
 </resources>

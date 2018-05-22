@@ -1,5 +1,6 @@
 package com.funprojects.wotlksaves.mvp.models;
 
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -11,8 +12,8 @@ public class WhitelistRecord extends RealmObject{
     public String getName() {
         return mName;
     }
-    public String getReason() {
-        return mReason;
+    public RealmList<String> getReasons() {
+        return mReasons;
     }
     public Instances getWhereSeen() {
         return mWhereSeen;
@@ -20,7 +21,7 @@ public class WhitelistRecord extends RealmObject{
 
     @PrimaryKey
     private String mName;
-    private String mReason;
+    private RealmList<String> mReasons;
     private Instances mWhereSeen;
 
 
@@ -28,9 +29,9 @@ public class WhitelistRecord extends RealmObject{
 
     }
 
-    public WhitelistRecord(String name, String reason, Instances where) {
+    public WhitelistRecord(String name, RealmList<String> reasons, Instances where) {
         this.mName = name;
-        this.mReason = reason;
+        this.mReasons = reasons;
         this.mWhereSeen = where;
     }
 }

@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.funprojects.wotlksaves.mvp.models.GameRealm;
-import com.funprojects.wotlksaves.mvp.models.RealmMigrations;
-import com.funprojects.wotlksaves.mvp.models.RealmRestorer;
+import com.funprojects.wotlksaves.mvp.models.realm.RealmMigrations;
+import com.funprojects.wotlksaves.mvp.models.realm.RealmRestorer;
 import com.funprojects.wotlksaves.mvp.models.Server;
 
 import java.io.IOException;
@@ -20,7 +20,7 @@ import io.realm.RealmConfiguration;
 
 public class App extends Application {
 
-    public final static int DB_VERSION = 7;
+    public final static int DB_VERSION = 8;
     private final static String FIRST_LAUNCH = "FIRST_LAUNCH";
 
 

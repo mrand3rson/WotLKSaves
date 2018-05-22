@@ -22,6 +22,7 @@ public class ContactsFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final int TABS_COUNT = 2;
     private String mParam1;
+    private TabFragment[] fragments = new TabFragment[TABS_COUNT];
 
     @BindView(R.id.pager)
     ViewPager mViewPager;
@@ -79,10 +80,16 @@ public class ContactsFragment extends Fragment {
         tabFragment.addRecord();
     }
 
+    public void updateList() {
+        int position = tabLayout.getSelectedTabPosition();
+        TabFragment tabFragment =
+                (TabFragment) mSectionsPagerAdapter.getItem(position);
+        tabFragment.updateList();
+    }
+
 
     class SectionsPagerAdapter extends FragmentStatePagerAdapter {
 
-        private TabFragment[] fragments = new TabFragment[getCount()];
         SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }

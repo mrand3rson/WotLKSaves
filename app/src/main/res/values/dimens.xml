@@ -11,4 +11,6 @@
     <dimen name="characters_card_width">150dp</dimen>
     <dimen name="characters_card_height">150dp</dimen>
     <dimen name="recycler_item_vertical_space">8dp</dimen>
+    <dimen name="button_more_width">50dp</dimen>
+    <dimen name="button_more_height">35dp</dimen>
 </resources>

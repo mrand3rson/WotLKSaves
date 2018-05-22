@@ -26,4 +26,6 @@ public abstract class TabFragment extends Fragment {
 
 
     public abstract void addRecord();
+
+    public abstract void updateList();
 }

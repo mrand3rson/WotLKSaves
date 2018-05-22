@@ -79,7 +79,6 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.View
                     blacklistRecord.getTimesCaught()
             ));
 
-            //adding LinearLayout (in future with TextView reasons)
             LinearLayout reasonsLayout = prepareReasonsLayout();
             layoutView.addView(reasonsLayout);
 

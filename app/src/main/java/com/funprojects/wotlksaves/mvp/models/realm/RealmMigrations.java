@@ -1,4 +1,4 @@
-package com.funprojects.wotlksaves.mvp.models;
+package com.funprojects.wotlksaves.mvp.models.realm;
 
 import android.content.Context;
 import android.os.Environment;
@@ -177,7 +177,6 @@ public class RealmMigrations implements RealmMigration {
             currentVersion++;
         }
 
-        //TODO: warning!!! change entities due to below manipulations
         if (currentVersion < 7) {
             schema.get("Account")
                     .removePrimaryKey()
@@ -216,6 +215,12 @@ public class RealmMigrations implements RealmMigration {
                     .addPrimaryKey("id");
 
             currentVersion++;
+        }
+
+        if (currentVersion < 8) {
+            schema.get("WhitelistRecord")
+                    .addRealmListField("mReasons", String.class)
+                    .removeField("mReason");
         }
     }
 }

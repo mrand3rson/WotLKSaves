@@ -20,7 +20,9 @@ public class AddServerPresenter extends MvpPresenter<AddServerView> {
     public ArrayList<Server> getServerList() {
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
+
         RealmResults<Server> results = realm.where(Server.class).findAll();
+
         realm.commitTransaction();
         if (results != null)
             return (ArrayList<Server>) realm.copyFromRealm(results);

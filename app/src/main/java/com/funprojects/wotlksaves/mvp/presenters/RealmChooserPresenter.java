@@ -31,7 +31,9 @@ public class RealmChooserPresenter extends MvpPresenter<ServerChooserView> {
                 .findFirst();
         if (dbRecord == null) {
             realm.beginTransaction();
+
             realm.copyToRealm(server);
+
             realm.commitTransaction();
         }
     }
@@ -45,7 +47,9 @@ public class RealmChooserPresenter extends MvpPresenter<ServerChooserView> {
                 .findFirst();
         if (dbRecord == null) {
             realm.beginTransaction();
+
             realm.copyToRealm(gameRealm);
+
             realm.commitTransaction();
             getViewState().onAddSuccessful();
         } else {
@@ -56,7 +60,9 @@ public class RealmChooserPresenter extends MvpPresenter<ServerChooserView> {
     public ArrayList<GameRealm> getGameRealms() {
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
+
         RealmResults<GameRealm> results = realm.where(GameRealm.class).findAll();
+
         realm.commitTransaction();
         return (ArrayList<GameRealm>) realm.copyFromRealm(results);
     }
