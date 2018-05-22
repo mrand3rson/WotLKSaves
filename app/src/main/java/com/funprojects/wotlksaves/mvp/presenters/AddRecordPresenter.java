@@ -8,6 +8,7 @@ import com.funprojects.wotlksaves.mvp.models.BlacklistRecord;
 import com.funprojects.wotlksaves.mvp.models.Instances;
 import com.funprojects.wotlksaves.mvp.models.WhitelistRecord;
 import com.funprojects.wotlksaves.mvp.views.AddRecordView;
+import com.funprojects.wotlksaves.ui.activities.MainActivity;
 
 import java.util.Arrays;
 
@@ -24,18 +25,20 @@ public class AddRecordPresenter extends MvpPresenter<AddRecordView> {
     public void addBlacklistRecord(Context context,
                                    String nickname,
                                    String... reason) {
-        BlacklistRecord record = persistBlackIfNotExists(nickname, reason);
+        BlacklistRecord record = persistBlackIfNotExists(context, nickname, reason);
         getViewState().addToBlacklist(record);
     }
 
     public void addWhitelistRecord(Context context,
                                    String nickname,
                                    String... reason) {
-        WhitelistRecord record = persistWhiteIfNotExists(nickname, reason);
+        WhitelistRecord record = persistWhiteIfNotExists(context, nickname, reason);
         getViewState().addToWhitelist(record);
     }
 
-    private WhitelistRecord persistWhiteIfNotExists(String nickname, String... reasonsRaw) {
+    private WhitelistRecord persistWhiteIfNotExists(Context context,
+                                                    String nickname,
+                                                    String... reasonsRaw) {
         RealmList<String> reasons = new RealmList<>();
         reasons.addAll(Arrays.asList(reasonsRaw));
         Realm realm = Realm.getDefaultInstance();
@@ -49,7 +52,8 @@ public class AddRecordPresenter extends MvpPresenter<AddRecordView> {
         if (result == null) {
             Instances instances = new Instances();
             instances.saves = new RealmList<>();
-            result = new WhitelistRecord(nickname, reasons, instances);
+            MainActivity activity = (MainActivity) context;
+            result = new WhitelistRecord(nickname, reasons, instances, activity.getGameRealm().id);
             return result;
         } else {
             getViewState().warnExists(result.getName());
@@ -57,7 +61,9 @@ public class AddRecordPresenter extends MvpPresenter<AddRecordView> {
         }
     }
 
-    private BlacklistRecord persistBlackIfNotExists(String nickname, String... reasonsRaw) {
+    private BlacklistRecord persistBlackIfNotExists(Context context,
+                                                    String nickname,
+                                                    String... reasonsRaw) {
         RealmList<String> reasons = new RealmList<>();
         reasons.addAll(Arrays.asList(reasonsRaw));
         Realm realm = Realm.getDefaultInstance();
@@ -69,7 +75,8 @@ public class AddRecordPresenter extends MvpPresenter<AddRecordView> {
         realm.commitTransaction();
         //if not exists then create new
         if (result == null) {
-            result = new BlacklistRecord(nickname, reasons, 1);
+            MainActivity activity = (MainActivity) context;
+            result = new BlacklistRecord(nickname, reasons, 1, activity.getGameRealm().id);
             return result;
         } else {
             getViewState().warnExists(result.getName());

@@ -61,13 +61,14 @@ public class GameRealm extends RealmObject implements Parcelable {
     }
     public RealmList<WhitelistRecord> getWhitelist() {
         if (mWhitelist == null | mBlacklist.isEmpty()) {
-            mWhitelist = new RealmList<>();
             Realm realm = Realm.getDefaultInstance();
             realm.beginTransaction();
 
-            RealmResults<WhitelistRecord> realmResults =
-                    realm.where(WhitelistRecord.class).findAll();
-            mWhitelist.addAll(realmResults);
+//            RealmResults<WhitelistRecord> realmResults =
+//                    realm.where(WhitelistRecord.class)
+//                            .equalTo("mGameRealmId", this.id).findAll();
+//            mWhitelist.addAll(realmResults);
+            mWhitelist.where().equalTo("mGameRealmId", this.id).findAll();
 
             realm.commitTransaction();
         }
@@ -97,10 +98,6 @@ public class GameRealm extends RealmObject implements Parcelable {
         this.id = setIdIncremented();
         this.mName = name;
         this.mServerName = serverName;
-    }
-
-    public String stringRepresentation() {
-        return String.format(Locale.getDefault(), "%s %s (%d)", mServerName, mName, id);
     }
 
     @Override

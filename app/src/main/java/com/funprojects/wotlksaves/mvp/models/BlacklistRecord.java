@@ -68,10 +68,11 @@ public class BlacklistRecord extends RealmObject {
 
     }
 
-    public BlacklistRecord(String name, List<String> reasons, int timesCaught) {
+    public BlacklistRecord(String name, List<String> reasons, int timesCaught, long gameRealmId) {
         this.id = setIdIncremented();
         this.mName = name;
         this.mReasons = (RealmList<String>) reasons;
         this.mTimesCaught = timesCaught;
+        this.mGameRealmId = gameRealmId;
     }
 }

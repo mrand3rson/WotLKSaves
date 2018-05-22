@@ -52,10 +52,11 @@ public class WhitelistRecord extends RealmObject{
 
     }
 
-    public WhitelistRecord(String name, List<String> reasons, Instances where) {
+    public WhitelistRecord(String name, List<String> reasons, Instances where, long gameRealmId) {
         this.id = setIdIncremented();
         this.mName = name;
         this.mReasons = (RealmList<String>) reasons;
         this.mWhereSeen = where;
+        this.mGameRealmId = gameRealmId;
     }
 }
