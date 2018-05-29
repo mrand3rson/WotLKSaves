@@ -2,6 +2,7 @@ package com.funprojects.wotlksaves.ui.dialogs;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +13,7 @@ import android.widget.Toast;
 import com.arellomobile.mvp.MvpAppCompatDialogFragment;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.funprojects.wotlksaves.R;
-import com.funprojects.wotlksaves.mvp.models.BlacklistRecord;
-import com.funprojects.wotlksaves.mvp.models.WhitelistRecord;
+import com.funprojects.wotlksaves.mvp.models.ListRecord;
 import com.funprojects.wotlksaves.mvp.presenters.AddRecordPresenter;
 import com.funprojects.wotlksaves.mvp.views.AddRecordView;
 import com.funprojects.wotlksaves.ui.activities.MainActivity;
@@ -24,14 +24,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.funprojects.wotlksaves.ui.dialogs.ListTypes.BLACK;
-import static com.funprojects.wotlksaves.ui.dialogs.ListTypes.WHITE;
+import static com.funprojects.wotlksaves.tools.ListTypes.BLACK;
+import static com.funprojects.wotlksaves.tools.ListTypes.WHITE;
 
 /**
  * Created by Andrei on 21.05.2018.
  */
 
-public class AddRecordDialog extends MvpAppCompatDialogFragment implements AddRecordView {
+public class AddRecordDialog extends MvpAppCompatDialogFragment
+        implements AddRecordView {
 
     private final static String TITLE = "Add a blacklist record...";
 
@@ -44,7 +45,7 @@ public class AddRecordDialog extends MvpAppCompatDialogFragment implements AddRe
     @InjectPresenter
     AddRecordPresenter mPresenter;
 
-    int type;
+    private byte type;
 
 
     @Nullable
@@ -65,6 +66,7 @@ public class AddRecordDialog extends MvpAppCompatDialogFragment implements AddRe
         return v;
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
@@ -80,27 +82,23 @@ public class AddRecordDialog extends MvpAppCompatDialogFragment implements AddRe
             return;
         }
 
-        switch (type) {
-            case BLACK: {
-                mPresenter.addBlacklistRecord(getActivity(), nickname, reason);
-                break;
-            }
-            case WHITE: {
-                mPresenter.addWhitelistRecord(getActivity(), nickname, reason);
-                break;
-            }
-        }
+        mPresenter.addListRecord(getActivity(), type, nickname, reason);
 
         this.dismiss();
     }
 
     @Override
-    public void addToBlacklist(BlacklistRecord record) {
-        ((MainActivity)getActivity()).addToBlacklist(record);
-    }
-
-    public void addToWhitelist(WhitelistRecord record) {
-        ((MainActivity)getActivity()).addToWhitelist(record);
+    public void addToScreen(ListRecord record, byte listType) {
+        switch (listType) {
+            case BLACK: {
+                ((MainActivity)getActivity()).addToBlacklist(record);
+                break;
+            }
+            case WHITE: {
+                ((MainActivity)getActivity()).addToWhitelist(record);
+                break;
+            }
+        }
     }
 
     @Override

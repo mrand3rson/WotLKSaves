@@ -12,13 +12,17 @@ import android.view.ViewGroup;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.funprojects.wotlksaves.R;
 import com.funprojects.wotlksaves.mvp.models.BlacklistRecord;
-import com.funprojects.wotlksaves.mvp.presenters.ContactsBlackPresenter;
+import com.funprojects.wotlksaves.mvp.models.ListRecord;
+import com.funprojects.wotlksaves.mvp.presenters.ContactsPresenter;
 import com.funprojects.wotlksaves.mvp.views.ContactsBlackView;
+import com.funprojects.wotlksaves.mvp.views.ContactsView;
+import com.funprojects.wotlksaves.tools.ContactsSortEngine;
+import com.funprojects.wotlksaves.tools.ListTypes;
 import com.funprojects.wotlksaves.ui.activities.MainActivity;
-import com.funprojects.wotlksaves.ui.adapters.recyclers.BlacklistAdapter;
+import com.funprojects.wotlksaves.ui.adapters.recyclers.ListRecordsAdapter;
 import com.funprojects.wotlksaves.ui.adapters.recyclers.VerticalSpaceItemDecoration;
 import com.funprojects.wotlksaves.ui.dialogs.AddRecordDialog;
-import com.funprojects.wotlksaves.ui.dialogs.SortTypes;
+import com.funprojects.wotlksaves.tools.SortTypes;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,37 +35,21 @@ import io.realm.RealmList;
 
 
 public class ContactsBlacklistFragment extends TabFragment
-        implements ContactsBlackView {
+        implements ContactsView {
 
     @BindDimen(R.dimen.recycler_item_vertical_space)
     int mVerticalSpacing;
 
     @BindView(R.id.blacklist_recycler)
     RecyclerView mRecycler;
-    BlacklistAdapter mAdapter;
+    ListRecordsAdapter mAdapter;
 
     @InjectPresenter
-    ContactsBlackPresenter mPresenter;
+    ContactsPresenter mPresenter;
 
 
     public ContactsBlacklistFragment() {
 
-    }
-
-    public static ContactsBlacklistFragment newInstance() {
-        ContactsBlacklistFragment fragment = new ContactsBlacklistFragment();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-//        if (getArguments() != null) {
-//            mParam1 = getArguments().getString(ARG_PARAM1);
-//        }
     }
 
     @Override
@@ -77,10 +65,10 @@ public class ContactsBlacklistFragment extends TabFragment
         if (mAdapter == null) {
             MainActivity activity = (MainActivity) getActivity();
 
-            ArrayList<BlacklistRecord> blacklist = new ArrayList<>();
+            ArrayList<ListRecord> blacklist = new ArrayList<>();
             blacklist.addAll(mPresenter.getBlacklist(activity));
 
-            mAdapter = new BlacklistAdapter(activity, blacklist);
+            mAdapter = new ListRecordsAdapter(activity, R.layout.recycler_blacklist_item, blacklist);
             mRecycler.setLayoutManager(new LinearLayoutManager(activity));
             mRecycler.addItemDecoration(new VerticalSpaceItemDecoration(mVerticalSpacing));
             mRecycler.setAdapter(mAdapter);
@@ -101,7 +89,7 @@ public class ContactsBlacklistFragment extends TabFragment
 
     @Override
     public void updateList(RealmList list) {
-        mPresenter.data = list;
+        mPresenter.blackData = list;
 
         mAdapter.data.clear();
         mAdapter.data.addAll(list);
@@ -111,66 +99,24 @@ public class ContactsBlacklistFragment extends TabFragment
     @Override
     public void clearFilter() {
         mAdapter.data.clear();
-        mAdapter.data.addAll(mPresenter.data);
+        mAdapter.data.addAll(mPresenter.blackData);
     }
 
     @Override
     public void filterAdapterData(String text) {
-        mAdapter.data = mPresenter.filterRecyclerItems(text);
+        mAdapter.data = mPresenter.filterRecyclerItems(text, ListTypes.BLACK);
         mAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void sortAdapterData(int sortType) {
-        Comparator<BlacklistRecord> comparator = null;
-        switch (sortType) {
-            case SortTypes.SORT_BY_NAME_ASC: {
-                comparator = buildAscNameComparator();
-                break;
-            }
-            case SortTypes.SORT_BY_NAME_DESC: {
-                comparator = buildDescNameComparator();
-                break;
-            }
-            case SortTypes.SORT_BY_DATE_ASC: {
-                comparator = buildAscIdComparator();
-                break;
-            }
-            case SortTypes.SORT_BY_DATE_DESC: {
-                comparator = buildDescIdComparator();
-                break;
-            }
-            case SortTypes.SORT_BY_TIMES_SEEN: {
-                comparator = buildTimesSeenComparator();
-                break;
-            }
-        }
+        Comparator<ListRecord> comparator =
+                ContactsSortEngine.getComparatorByType(sortType);
 
         if (comparator != null) {
             Collections.sort(mAdapter.data, comparator);
             mAdapter.notifyDataSetChanged();
         }
-    }
-
-    private Comparator<BlacklistRecord> buildAscNameComparator() {
-        return (r1, r2) -> r1.getName().toLowerCase()
-                .compareTo(r2.getName().toLowerCase());
-    }
-    private Comparator<BlacklistRecord> buildDescNameComparator() {
-        return (r1, r2) -> r2.getName().toLowerCase()
-                .compareTo(r1.getName().toLowerCase());
-    }
-    private Comparator<BlacklistRecord> buildAscIdComparator() {
-        return (r1, r2) -> Long.compare(r1.id, r2.id);
-    }
-    private Comparator<BlacklistRecord> buildDescIdComparator() {
-        return (r1, r2) -> Long.compare(r2.id, r1.id);
-    }
-    private Comparator<BlacklistRecord> buildTimesSeenComparator() {
-        return (r1, r2) -> {
-            int i1 = r1.getTimesCaught();
-            int i2 = r2.getTimesCaught();
-            return Integer.compare(i1, i2);
-        };
+        mPresenter.currentBlackComparator = comparator;
     }
 }

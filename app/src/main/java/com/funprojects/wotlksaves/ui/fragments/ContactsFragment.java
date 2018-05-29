@@ -20,10 +20,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.funprojects.wotlksaves.R;
-import com.funprojects.wotlksaves.mvp.models.WhitelistRecord;
 import com.funprojects.wotlksaves.ui.activities.MainActivity;
 import com.funprojects.wotlksaves.ui.dialogs.SortContactsDialog;
-import com.funprojects.wotlksaves.ui.dialogs.SortTypes;
+import com.funprojects.wotlksaves.tools.SortTypes;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

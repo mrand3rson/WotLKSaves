@@ -93,7 +93,7 @@ public class CharacterAdapter extends RecyclerView.Adapter<CharacterAdapter.View
         @BindView(R.id.card)
         CardView card;
 
-        @BindView(R.id.nickname)
+        @BindView(R.id.black_nickname)
         TextView mName;
 
 
@@ -106,12 +106,7 @@ public class CharacterAdapter extends RecyclerView.Adapter<CharacterAdapter.View
             mName.setText(item.getNickname());
             mName.setTextColor(CharacterInfoProcessor.getClassColor(mContext, item.getGameClass()));
 
-            card.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Toast.makeText(mContext, "Add logic", Toast.LENGTH_SHORT).show();
-                }
-            });
+            card.setOnClickListener(view -> Toast.makeText(mContext, "Add logic", Toast.LENGTH_SHORT).show());
         }
     }
 
@@ -130,11 +125,8 @@ public class CharacterAdapter extends RecyclerView.Adapter<CharacterAdapter.View
         }
 
         void bind() {
-            card.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    ((MainActivity)mContext).openAddCharacterDialog();
-                }
+            card.setOnClickListener(view -> {
+                ((MainActivity)mContext).openAddCharacterDialog();
             });
         }
     }

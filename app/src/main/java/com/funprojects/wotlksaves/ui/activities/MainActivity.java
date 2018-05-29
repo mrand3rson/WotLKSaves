@@ -14,9 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.funprojects.wotlksaves.R;
-import com.funprojects.wotlksaves.mvp.models.BlacklistRecord;
 import com.funprojects.wotlksaves.mvp.models.GameRealm;
-import com.funprojects.wotlksaves.mvp.models.WhitelistRecord;
+import com.funprojects.wotlksaves.mvp.models.ListRecord;
 import com.funprojects.wotlksaves.ui.dialogs.AddCharacterDialog;
 import com.funprojects.wotlksaves.ui.fragments.CharactersFragment;
 import com.funprojects.wotlksaves.ui.fragments.ContactsFragment;
@@ -140,7 +139,7 @@ public class MainActivity extends AppCompatActivity
                 .commit();
     }
 
-    public void addToBlacklist(BlacklistRecord record) {
+    public void addToBlacklist(ListRecord record) {
         if (record != null) {
             Realm realm = Realm.getDefaultInstance();
             if (!realm.isInTransaction())
@@ -153,7 +152,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void addToWhitelist(WhitelistRecord record) {
+    public void addToWhitelist(ListRecord record) {
         if (record != null) {
             Realm realm = Realm.getDefaultInstance();
             if (!realm.isInTransaction())

@@ -1,4 +1,4 @@
-package com.funprojects.wotlksaves.ui.dialogs;
+package com.funprojects.wotlksaves.tools;
 
 /**
  * Created by Andrei on 22.05.2018.
@@ -14,9 +14,9 @@ public class SortTypes {
     public final static int SORT_BY_DATE_DESC = 4;
 
 
-    public static String getSortName(int trainingType) {
+    public static String getSortName(int sortType) {
         String result;
-        switch (trainingType) {
+        switch (sortType) {
             case SORT_BY_NAME_ASC: {
                 result = "By Name Ascending";
                 break;

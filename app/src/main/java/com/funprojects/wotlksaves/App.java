@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.funprojects.wotlksaves.mvp.models.BlacklistRecord;
 import com.funprojects.wotlksaves.mvp.models.GameRealm;
 import com.funprojects.wotlksaves.mvp.models.realm.RealmMigrations;
 import com.funprojects.wotlksaves.mvp.models.realm.RealmRestorer;
@@ -13,6 +14,8 @@ import java.io.IOException;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmList;
+import io.realm.RealmResults;
 
 /**
  * Created by Andrei on 17.04.2018.
@@ -20,7 +23,7 @@ import io.realm.RealmConfiguration;
 
 public class App extends Application {
 
-    public final static int DB_VERSION = 10;
+    public final static int DB_VERSION = 12;
     private final static String FIRST_LAUNCH = "FIRST_LAUNCH";
 
 
@@ -68,13 +71,20 @@ public class App extends Application {
 
         Server server = new Server("WoWCircle");
         GameRealm gameRealm = new GameRealm("x5", "WoWCircle");
-
+        RealmList<BlacklistRecord> blacklistOld = new RealmList<>();
+        RealmResults<BlacklistRecord> results = realm.where(BlacklistRecord.class)
+                .equalTo("mGameRealmId", gameRealm.id)
+                .findAll();
+        blacklistOld.addAll(results);
+        gameRealm.setBlacklistFromOld(blacklistOld);
         if (realm.where(Server.class)
                 .equalTo("mName", "WoWCircle")
                 .findFirst() == null) {
             realm.copyToRealm(server);
         }
-        realm.copyToRealm(gameRealm);
+        RealmResults<GameRealm> check = realm.where(GameRealm.class)
+                .findAll();
+        realm.copyToRealmOrUpdate(gameRealm);
 
         realm.commitTransaction();
     }

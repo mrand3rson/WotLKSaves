@@ -19,14 +19,15 @@ public class GameCharacter extends RealmObject implements Parcelable, ICharacter
 
     private long setIdIncremented() {
         Realm realm = Realm.getDefaultInstance();
-        if (!realm.isInTransaction())
+        boolean inOuterTransaction = realm.isInTransaction();
+        if (!inOuterTransaction)
             realm.beginTransaction();
 
         Number maxId = realm.where(this.getClass())
                 .max("id");
 
-        realm.commitTransaction();
-
+        if (!inOuterTransaction)
+            realm.commitTransaction();
 
         return (maxId != null ?
                 maxId.longValue() + 1 :
@@ -118,7 +119,7 @@ public class GameCharacter extends RealmObject implements Parcelable, ICharacter
 
 
 
-    protected GameCharacter(Parcel in) {
+    private GameCharacter(Parcel in) {
         id = in.readLong();
         mNickname = in.readString();
         mGameRace = in.readByte();

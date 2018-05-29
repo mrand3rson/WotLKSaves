@@ -6,17 +6,16 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.funprojects.wotlksaves.R;
+import com.funprojects.wotlksaves.tools.SortTypes;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.funprojects.wotlksaves.ui.dialogs.SortTypes.ARG_SORT_TYPE;
+import static com.funprojects.wotlksaves.tools.SortTypes.ARG_SORT_TYPE;
 
 /**
  * Created by Andrei on 22.05.2018.

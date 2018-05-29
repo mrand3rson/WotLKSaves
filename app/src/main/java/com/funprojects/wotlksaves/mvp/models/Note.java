@@ -13,13 +13,15 @@ public class Note extends RealmObject {
     //TODO: uncomment when Notes are goin' to appear in the app
     private long setIdIncremented() {
         Realm realm = Realm.getDefaultInstance();
-        if (!realm.isInTransaction())
+        boolean inOuterTransaction = realm.isInTransaction();
+        if (!inOuterTransaction)
             realm.beginTransaction();
 
         Number maxId = realm.where(this.getClass())
                 .max("id");
 
-        realm.commitTransaction();
+        if (!inOuterTransaction)
+            realm.commitTransaction();
 
         return (maxId != null ?
                 maxId.longValue() + 1 :

@@ -3,12 +3,13 @@ package com.funprojects.wotlksaves.mvp.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.funprojects.wotlksaves.tools.ListTypes;
+
 import java.util.Locale;
 
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
-import io.realm.RealmResults;
 import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
 
@@ -20,13 +21,15 @@ public class GameRealm extends RealmObject implements Parcelable {
 
     private long setIdIncremented() {
         Realm realm = Realm.getDefaultInstance();
-        if (!realm.isInTransaction())
+        boolean inOuterTransaction = realm.isInTransaction();
+        if (!inOuterTransaction)
             realm.beginTransaction();
 
         Number maxId = realm.where(this.getClass())
                 .max("id");
 
-        realm.commitTransaction();
+        if (!inOuterTransaction)
+            realm.commitTransaction();
 
         return (maxId != null ?
                 maxId.longValue() + 1 :
@@ -44,51 +47,80 @@ public class GameRealm extends RealmObject implements Parcelable {
         this.mServerName = serverName;
     }
 
-    public RealmList<BlacklistRecord> getBlacklist() {
+    public void setBlacklistFromOld(RealmList<BlacklistRecord> blacklistOld) {
+        Realm realm = Realm.getDefaultInstance();
+        if (mBlacklist == null) {
+            mBlacklist = new RealmList<>();
+        }
+        for (BlacklistRecord oldRecord : blacklistOld) {
+            ListRecord newRecord = new ListRecord(
+                    oldRecord.id,
+                    oldRecord.getName(),
+                    oldRecord.getReasons(),
+                    oldRecord.getWhereSeen(),
+                    oldRecord.getTimesCaught(),
+                    ListTypes.BLACK,
+                    oldRecord.getGameRealmId()
+            );
+
+            mBlacklist.add(newRecord);
+        }
+        realm.copyToRealm(mBlacklist);
+    }
+    public RealmList<ListRecord> getBlacklist() {
         if (mBlacklist == null || mBlacklist.isEmpty()) {
             mBlacklist = new RealmList<>();
             Realm realm = Realm.getDefaultInstance();
             realm.beginTransaction();
 
-            RealmResults<BlacklistRecord> realmResults =
-                    realm.where(BlacklistRecord.class)
-                            .equalTo("mGameRealmId", this.id).findAll();
-            mBlacklist.addAll(realmResults);
+            mBlacklist.where()
+                    .equalTo("mGameRealmId", this.id)
+                    .equalTo("mListType", ListTypes.BLACK)
+                    .findAll();
 
             realm.commitTransaction();
         }
         return mBlacklist;
     }
-    public RealmList<WhitelistRecord> getWhitelist() {
-        if (mWhitelist == null | mBlacklist.isEmpty()) {
-            Realm realm = Realm.getDefaultInstance();
-            realm.beginTransaction();
 
+
+    public RealmList<ListRecord> getWhitelist() {
+        if (mWhitelist == null || mWhitelist.isEmpty()) {
+            mWhitelist = new RealmList<>();
+            Realm realm = Realm.getDefaultInstance();
+            boolean inOuterTransaction = realm.isInTransaction();
+            if (!inOuterTransaction) {
+                realm.beginTransaction();
+            }
 //            RealmResults<WhitelistRecord> realmResults =
 //                    realm.where(WhitelistRecord.class)
 //                            .equalTo("mGameRealmId", this.id).findAll();
 //            mWhitelist.addAll(realmResults);
-            mWhitelist.where().equalTo("mGameRealmId", this.id).findAll();
+            mWhitelist.where()
+                    .equalTo("mGameRealmId", this.id)
+                    .equalTo("mListType", ListTypes.WHITE)
+                    .findAll();
 
-            realm.commitTransaction();
+            if (!inOuterTransaction) {
+                realm.commitTransaction();
+            }
         }
         return mWhitelist;
     }
-
-
     @PrimaryKey @Index
     public long id;
     private String mName;
-    private String mServerName;
 
-    private RealmList<BlacklistRecord> mBlacklist;
-    private RealmList<WhitelistRecord> mWhitelist;
+    private String mServerName;
+    private RealmList<ListRecord> mBlacklist;
+
+
+    private RealmList<ListRecord> mWhitelist;
 
 
     public GameRealm() {
 
     }
-
 
     public GameRealm(String name) {
         this.mName = name;

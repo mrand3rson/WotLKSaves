@@ -1,22 +1,16 @@
 package com.funprojects.wotlksaves.mvp.models.realm;
 
-import android.content.Context;
-import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import com.funprojects.wotlksaves.tools.ListTypes;
 
 import io.realm.DynamicRealm;
 import io.realm.DynamicRealmObject;
 import io.realm.FieldAttribute;
-import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmMigration;
 import io.realm.RealmObjectSchema;
-import io.realm.RealmResults;
 import io.realm.RealmSchema;
 
 /**
@@ -25,9 +19,8 @@ import io.realm.RealmSchema;
 
 public class RealmMigrations implements RealmMigration {
 
-
+    private static final String LOG_TAG = "Migrations";
     private static long initId = 1;
-    private static boolean isInitializedFromOld;
 
 
     public RealmMigrations() {
@@ -38,29 +31,27 @@ public class RealmMigrations implements RealmMigration {
     public void migrate(@NonNull DynamicRealm realm, long oldVersion, long newVersion) {
         final RealmSchema schema = realm.getSchema();
 
-        long currentVersion = 0;
+//        long currentVersion = 0;
 
         //created BlacklistRecord
-        if (currentVersion < 1) {
-
-            isInitializedFromOld = true;
-            currentVersion++;
+        if (oldVersion < 1) {
+            oldVersion++;
         }
 
         //created GameRealm
         //created Server
-        if (currentVersion < 2) {
+        if (oldVersion < 2) {
             schema.create("GameRealm")
                     .addField("mName", String.class, FieldAttribute.PRIMARY_KEY)
                     .addField("mServerName", String.class);
             schema.create("Server")
                     .addField("mName", String.class, FieldAttribute.PRIMARY_KEY);
-            currentVersion++;
+            oldVersion++;
         }
 
         //created Account
         //created GameCharacter
-        if (currentVersion < 3) {
+        if (oldVersion < 3) {
             schema.create("Account")
                     .addField("mName", String.class, FieldAttribute.PRIMARY_KEY);
             schema.create("GameCharacter")
@@ -72,11 +63,11 @@ public class RealmMigrations implements RealmMigration {
                     .addField("mSpec1", byte.class)
                     .addField("mSpec2", byte.class)
                     .addField("mAccountName", String.class);
-            currentVersion++;
+            oldVersion++;
         }
 
         //re-created GameCharacter (new id)
-        if (currentVersion < 4) {
+        if (oldVersion < 4) {
             schema.remove("GameCharacter");
             schema.create("GameCharacter")
                     .addField("id", long.class, FieldAttribute.PRIMARY_KEY)
@@ -88,7 +79,7 @@ public class RealmMigrations implements RealmMigration {
                     .addField("mSpec2", byte.class)
                     .addField("mAccountName", String.class)
                     .addRealmObjectField("mGameRealm", schema.get("GameRealm"));
-            currentVersion++;
+            oldVersion++;
         }
 
         //updated Account (FK gameCharacterName)
@@ -105,7 +96,7 @@ public class RealmMigrations implements RealmMigration {
         //updated Account (GameRealm gameRealm -> long gameRealmId)
 
         //created Note
-        if (currentVersion < 5) {
+        if (oldVersion < 5) {
             schema.get("Account")
                     .addField("mGameRealmName", String.class);
 
@@ -161,20 +152,20 @@ public class RealmMigrations implements RealmMigration {
                     .addField("mDone", boolean.class)
                     .addField("mGameCharacterId", long.class);
 
-            currentVersion++;
+            oldVersion++;
         }
 
         //altered GameRealm (Blacklist+Whitelist)
-        if (currentVersion < 6) {
+        if (oldVersion < 6) {
             schema.get("GameRealm")
                     .addRealmListField("mBlacklist", schema.get("BlacklistRecord"))
                     .addRealmListField("mWhitelist", schema.get("WhitelistRecord"));
 
-            currentVersion++;
+            oldVersion++;
         }
 
         //altered Account, GameRealm, BlacklistRecord (added id
-        if (currentVersion < 7) {
+        if (oldVersion < 7) {
             schema.get("Account")
                     .removePrimaryKey()
                     .addField("id", long.class, FieldAttribute.PRIMARY_KEY)
@@ -216,16 +207,16 @@ public class RealmMigrations implements RealmMigration {
                     .addField("mGameRealmId", long.class)
                     .addPrimaryKey("id");
 
-            currentVersion++;
+            oldVersion++;
         }
 
-        if (currentVersion < 8) {
+        if (oldVersion < 8) {
             schema.get("WhitelistRecord")
                     .addRealmListField("mReasons", String.class)
                     .removeField("mReason");
         }
 
-        if (currentVersion < 9) {
+        if (oldVersion < 9) {
             schema.get("Instances")
                     .addRealmListField("saves", Boolean.class)
                     .removeField("naxx10")
@@ -252,7 +243,7 @@ public class RealmMigrations implements RealmMigration {
                     .removeField("rs25h");
         }
 
-        if (currentVersion < 10) {
+        if (oldVersion < 10) {
             schema.get("BlacklistRecord")
                     .addField("mName", String.class)
                     .addRealmListField("mReasons", String.class)
@@ -262,12 +253,69 @@ public class RealmMigrations implements RealmMigration {
                         public void apply(DynamicRealmObject obj) {
                             obj.setString("mName", obj.getString("name"));
                             obj.setList("mReasons", obj.getList("reasons", String.class));
-                            obj.setInt("mTimesCaught", obj.getInt("timesCaught"));
+                            obj.setInt("mTimesCaught", 1);
                         }
                     })
                     .removeField("name")
                     .removeField("reasons")
                     .removeField("timesCaught");
+        }
+
+        if (oldVersion < 11) {
+            Log.d(LOG_TAG, "updating to 11");
+
+
+            schema.get("BlacklistRecord")
+                    .addRealmObjectField("mWhereSeen", schema.get("Instances"));
+
+            schema.create("ListRecord")
+                    .addField("id", long.class, FieldAttribute.PRIMARY_KEY)
+                    .addField("mListType", byte.class)
+                    .addField("mName", String.class)
+                    .addRealmListField("mReasons", String.class)
+                    .addRealmObjectField("mWhereSeen", schema.get("Instances"))
+                    .addField("mTimesCaught", int.class)
+                    .addField("mGameRealmId", long.class);
+
+            schema.get("GameRealm")
+                    .renameField("mBlacklist", "mBlacklistOld")
+                    .renameField("mWhitelist", "mWhitelistOld")
+                    .addRealmListField("mBlacklist", schema.get("ListRecord"))
+                    .addRealmListField("mWhitelist", schema.get("ListRecord"))
+                    .transform(obj -> {
+                        RealmList<DynamicRealmObject> blacklistOld = obj.getList("mBlacklistOld");
+                        RealmList<DynamicRealmObject> blacklist = obj.getList("mBlacklist");
+                        moveListToNew(realm, blacklistOld, blacklist, ListTypes.BLACK);
+                        RealmList<DynamicRealmObject> whitelistOld = obj.getList("mWhitelistOld");
+                        RealmList<DynamicRealmObject> whitelist = obj.getList("mWhitelist");
+                        moveListToNew(realm, whitelistOld, whitelist, ListTypes.WHITE);
+                    });
+
+            //TODO: remove blacklistrecord/whitelistrecord
+        }
+
+        if (oldVersion < 12) {
+            schema.get("GameRealm")
+                    .removeField("mBlacklistOld")
+                    .removeField("mWhitelistOld");
+        }
+    }
+
+    private void moveListToNew(DynamicRealm realm,
+                               RealmList<DynamicRealmObject> listOld,
+                               RealmList<DynamicRealmObject> listNew,
+                               byte listType) {
+        realm.delete("ListRecord");
+        for (DynamicRealmObject oldObj: listOld) {
+
+            DynamicRealmObject newObj =
+                    realm.createObject("ListRecord", oldObj.getLong("id"));
+            newObj.setString("mName", oldObj.getString("mName"));
+            newObj.setList("mReasons", oldObj.getList("mReasons", String.class));
+            newObj.setObject("mWhereSeen", oldObj.get("mWhereSeen"));
+            newObj.setByte("mListType", listType);
+            newObj.setLong("mGameRealmId", oldObj.getLong("mGameRealmId"));
+            listNew.add(newObj);
         }
     }
 }
