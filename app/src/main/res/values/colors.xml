@@ -2,9 +2,11 @@
 <resources>
     <color name="colorPrimary">#FFFFD600</color>
     <color name="colorPrimaryDark">#FFFFB300</color>
-    <color name="colorAccent">#FF0026FF</color>
+    <color name="colorAccent">#0026ff</color>
 
     <color name="colorHint">@android:color/darker_gray</color>
+    <color name="colorBlacklistBackground">@android:color/darker_gray</color>
+    <color name="colorWhitelistBackground">@android:color/white</color>
 
     <color name="colorNavMenuChecked">#000000</color>
     <color name="colorNavMenuIconChecked">#000000</color>

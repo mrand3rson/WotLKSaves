@@ -24,6 +24,8 @@ import com.funprojects.wotlksaves.ui.activities.MainActivity;
 import com.funprojects.wotlksaves.ui.dialogs.SortContactsDialog;
 import com.funprojects.wotlksaves.tools.SortTypes;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -95,14 +97,20 @@ public class ContactsFragment extends Fragment {
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         TabLayout.OnTabSelectedListener onTabSelectedListener = new TabLayout.ViewPagerOnTabSelectedListener(mViewPager);
-        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(onTabSelectedListener);
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout) {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                ((MainActivity)getActivity()).finishActionMode();
+            }
+        });
         return v;
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        getActivity().getMenuInflater().inflate(R.menu.main, menu);
+        getActivity().getMenuInflater().inflate(R.menu.main_contacts, menu);
     }
 
     @Override

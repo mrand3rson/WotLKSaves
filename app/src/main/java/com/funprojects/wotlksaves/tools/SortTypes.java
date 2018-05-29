@@ -18,23 +18,23 @@ public class SortTypes {
         String result;
         switch (sortType) {
             case SORT_BY_NAME_ASC: {
-                result = "By Name Ascending";
+                result = "Name Ascending";
                 break;
             }
             case SORT_BY_NAME_DESC: {
-                result = "By Name Descending";
+                result = "Name Descending";
                 break;
             }
             case SORT_BY_DATE_ASC: {
-                result = "By Adding Date Ascending";
+                result = "Adding Date Ascending";
                 break;
             }
             case SORT_BY_DATE_DESC: {
-                result = "By Adding Date Descending";
+                result = "Adding Date Descending";
                 break;
             }
             case SORT_BY_TIMES_SEEN: {
-                result = "By Times Seen";
+                result = "Times Seen";
                 break;
             }
             default: {

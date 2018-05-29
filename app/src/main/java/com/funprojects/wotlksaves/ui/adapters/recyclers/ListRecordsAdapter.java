@@ -1,8 +1,11 @@
 package com.funprojects.wotlksaves.ui.adapters.recyclers;
 
 import android.content.Context;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -13,6 +16,7 @@ import android.widget.Toast;
 
 import com.funprojects.wotlksaves.R;
 import com.funprojects.wotlksaves.mvp.models.ListRecord;
+import com.funprojects.wotlksaves.ui.activities.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,17 +24,20 @@ import java.util.List;
 import butterknife.BindDimen;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
 
 /**
  * Created by Andrei on 21.05.2018.
  */
 
-public class ListRecordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener {
+public class ListRecordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final Context mContext;
     private final int mItemLayout;
-
     public ArrayList<ListRecord> data;
+
+    private boolean multiSelect = false;
+    private ArrayList<ListRecord> selectedItems = new ArrayList<ListRecord>();
 
 
     public ListRecordsAdapter(Context context, int itemLayout, ArrayList<ListRecord> data) {
@@ -78,6 +85,44 @@ public class ListRecordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         return data.size();
     }
 
+
+    private void selectItemForAction(View layout, ListRecord record) {
+        int checked;
+        int unchecked;
+
+        switch (mItemLayout) {
+            case R.layout.recycler_blacklist_item: {
+                checked = mContext.getResources().getColor(R.color.colorWhitelistBackground);
+                unchecked = mContext.getResources().getColor(R.color.colorBlacklistBackground);
+                break;
+            }
+            case R.layout.recycler_whitelist_item: {
+                checked = mContext.getResources().getColor(R.color.colorBlacklistBackground);
+                unchecked = mContext.getResources().getColor(R.color.colorWhitelistBackground);
+                break;
+            }
+            default:
+                return;
+        }
+
+        if (multiSelect) {
+            if (selectedItems.contains(record)) {
+                selectedItems.remove(record);
+                layout.setBackgroundColor(unchecked);
+            } else {
+                selectedItems.add(record);
+                layout.setBackgroundColor(checked);
+            }
+        }
+    }
+
+
+    private void openDialogBoard(ListRecord record) {
+        //TODO: open dialog to show instances' checkboxes
+        Toast.makeText(mContext, "OOPS", Toast.LENGTH_SHORT).show();
+    }
+
+
     class BlackViewHolder extends RecyclerView.ViewHolder {
 
         @BindDimen(R.dimen.activity_horizontal_margin)
@@ -103,11 +148,23 @@ public class ListRecordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         private void bind(ListRecord record) {
             this.setIsRecyclable(false);
 
+            layoutView.setOnLongClickListener(view -> {
+                if (!multiSelect) {
+                    initActionMode();
+                    selectItemForAction(view, record);
+                }
+                return true;
+            });
+            layoutView.setOnClickListener(view -> {
+                if (multiSelect) {
+                    selectItemForAction(view, record);
+                }
+            });
+
             nicknameView.setText(record.getName());
             counterView.setText(String.valueOf(record.getTimesSeen()));
             seenButton.setOnClickListener(view -> {
-                //TODO: open dialog with "whereSeen" board
-                Toast.makeText(mContext, "OOPS", Toast.LENGTH_SHORT).show();
+                openDialogBoard(record);
             });
 
             LinearLayout reasonsLayout = prepareReasonsLayout();
@@ -138,17 +195,19 @@ public class ListRecordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                             ViewGroup.LayoutParams.WRAP_CONTENT);
             for (String reason : reasons) {
                 TextView reasonView = new TextView(mContext);
+                reasonView.setTextAppearance(mContext, R.style.AppTheme_Dark);
                 reasonView.setLayoutParams(reasonParams);
                 reasonView.setText(reason);
                 reasonsLayout.addView(reasonView);
             }
         }
-
     }
-    class WhiteViewHolder extends RecyclerView.ViewHolder {
 
+
+    class WhiteViewHolder extends RecyclerView.ViewHolder {
         @BindDimen(R.dimen.activity_horizontal_margin)
         int horizontalMargin;
+
         @BindView(R.id.white_item_layout)
         RelativeLayout layoutView;
 
@@ -161,20 +220,32 @@ public class ListRecordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         @BindView(R.id.white_seen)
         Button seenButton;
 
+
         private WhiteViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
 
-
         private void bind(ListRecord record) {
             this.setIsRecyclable(false);
+
+            layoutView.setOnLongClickListener(view -> {
+                if (!multiSelect) {
+                    initActionMode();
+                    selectItemForAction(view, record);
+                }
+                return true;
+            });
+            layoutView.setOnClickListener(view -> {
+                if (multiSelect) {
+                    selectItemForAction(view, record);
+                }
+            });
 
             nicknameView.setText(record.getName());
             counterView.setText(String.valueOf(record.getTimesSeen()));
             seenButton.setOnClickListener(view -> {
-                //TODO: open dialog with "whereSeen" board
-                Toast.makeText(mContext, "OOPS", Toast.LENGTH_SHORT).show();
+                openDialogBoard(record);
             });
 
             LinearLayout reasonsLayout = prepareReasonsLayout();
@@ -187,8 +258,8 @@ public class ListRecordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             RelativeLayout.LayoutParams relativeParams =
                     new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT);
-            relativeParams.addRule(RelativeLayout.ALIGN_START, R.id.black_title_layout);
-            relativeParams.addRule(RelativeLayout.BELOW, R.id.black_title_layout);
+            relativeParams.addRule(RelativeLayout.ALIGN_START, R.id.white_title_layout);
+            relativeParams.addRule(RelativeLayout.BELOW, R.id.white_title_layout);
             relativeParams.leftMargin = horizontalMargin;
             relativeParams.rightMargin = horizontalMargin;
 
@@ -198,7 +269,6 @@ public class ListRecordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             return reasonsLayout;
         }
-
         private void fillReasonsLayout(LinearLayout reasonsLayout, List<String> reasons) {
             LinearLayout.LayoutParams reasonParams =
                     new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -213,8 +283,54 @@ public class ListRecordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     }
 
-    @Override
-    public void onClick(View view) {
+    private void initActionMode() {
+        ActionMode.Callback callback = new ActionMode.Callback() {
+            @Override
+            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+                multiSelect = true;
+                ((MainActivity)mContext).getMenuInflater().inflate(R.menu.main_contacts_action, menu);
+                return true;
+            }
 
+            @Override
+            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.action_delete: {
+                        removeItems(selectedItems);
+                        actionMode.finish();
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode actionMode) {
+                multiSelect = false;
+                selectedItems.clear();
+                notifyDataSetChanged();
+            }
+
+            private void removeItems(ArrayList<ListRecord> selectedItems) {
+                Realm realm = Realm.getDefaultInstance();
+                realm.beginTransaction();
+
+                data.removeAll(selectedItems);
+                for (ListRecord item : selectedItems) {
+                    item.deleteFromRealm();
+                }
+
+                realm.commitTransaction();
+                notifyDataSetChanged();
+            }
+        };
+
+        ((MainActivity)mContext).initContactsActionMode(callback);
     }
 }

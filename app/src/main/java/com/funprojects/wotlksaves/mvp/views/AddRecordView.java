@@ -12,7 +12,5 @@ import com.funprojects.wotlksaves.mvp.models.ListRecord;
 @StateStrategyType(AddToEndSingleStrategy.class)
 public interface AddRecordView extends MvpView {
     void warnExists(String name);
-    //    void addToBlacklist(BlacklistRecord record);
-    //    void addToWhitelist(WhitelistRecord record);
     void addToScreen(ListRecord record, byte listType);
 }

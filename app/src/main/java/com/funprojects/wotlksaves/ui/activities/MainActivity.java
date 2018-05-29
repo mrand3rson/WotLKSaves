@@ -9,6 +9,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,11 +34,13 @@ public class MainActivity extends AppCompatActivity
         return mGameRealm;
     }
 
-    GameRealm mGameRealm;
-    ContactsFragment contactsFragment;
-
     @BindView(R.id.nav_view)
     NavigationView mNavigationView;
+
+    private GameRealm mGameRealm;
+    private ContactsFragment contactsFragment;
+
+    private ActionMode mActionMode;
 
 
     @Override
@@ -162,6 +165,16 @@ public class MainActivity extends AppCompatActivity
 
             realm.commitTransaction();
             contactsFragment.updateList(mGameRealm.getWhitelist());
+        }
+    }
+
+    public void initContactsActionMode(ActionMode.Callback callback) {
+        mActionMode = startSupportActionMode(callback);
+    }
+
+    public void finishActionMode() {
+        if (mActionMode != null) {
+            mActionMode.finish();
         }
     }
 }
