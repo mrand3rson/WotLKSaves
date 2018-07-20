@@ -27,6 +27,7 @@ import com.funprojects.wotlksaves.tools.SortTypes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import butterknife.BindDimen;
 import butterknife.BindView;
@@ -88,7 +89,7 @@ public class ContactsBlacklistFragment extends TabFragment
     }
 
     @Override
-    public void updateList(RealmList list) {
+    public void updateList(RealmList<ListRecord> list) {
         mPresenter.blackData = list;
 
         mAdapter.data.clear();
@@ -100,12 +101,15 @@ public class ContactsBlacklistFragment extends TabFragment
     public void clearFilter() {
         mAdapter.data.clear();
         mAdapter.data.addAll(mPresenter.blackData);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void filterAdapterData(String text) {
-        mAdapter.data = mPresenter.filterRecyclerItems(text, ListTypes.BLACK);
-        mAdapter.notifyDataSetChanged();
+        if (mAdapter.data != null) {
+            mAdapter.data = mPresenter.filterRecyclerItems(text, ListTypes.BLACK);
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override

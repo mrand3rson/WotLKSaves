@@ -5,6 +5,7 @@ import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
 
 /**
  * Created by Andrei on 29.04.2018.
@@ -33,6 +34,14 @@ public class ListRecord extends RealmObject {
         return mListType;
     }
 
+    public boolean isHorde() {
+        return mFaction;
+    }
+
+    public void setFaction(boolean faction) {
+        mFaction = faction;
+    }
+
     public String getName() {
         return mName;
     }
@@ -49,6 +58,10 @@ public class ListRecord extends RealmObject {
         return mTimesCaught;
     }
 
+    public void incrementTimesSeen() {
+        mTimesCaught++;
+    }
+
     public long getGameRealmId() {
         return mGameRealmId;
     }
@@ -59,6 +72,7 @@ public class ListRecord extends RealmObject {
     @PrimaryKey @Index
     public long id;
     private byte mListType;
+    private boolean mFaction;
     private String mName;
     private RealmList<String> mReasons;
     private Instances mWhereSeen;
@@ -73,6 +87,7 @@ public class ListRecord extends RealmObject {
 
     public ListRecord(String name,
                       RealmList<String> reasons,
+                      boolean faction,
                       Instances whereSeen,
                       int timesCaught,
                       byte listType,
@@ -80,6 +95,7 @@ public class ListRecord extends RealmObject {
         this.id = setIdIncremented();
         this.mName = name;
         this.mReasons = reasons;
+        this.mFaction = faction;
         this.mWhereSeen = whereSeen;
         this.mTimesCaught = timesCaught;
         this.mListType = listType;
@@ -89,6 +105,7 @@ public class ListRecord extends RealmObject {
     public ListRecord(long id,
                       String name,
                       RealmList<String> reasons,
+                      boolean faction,
                       Instances whereSeen,
                       int timesCaught,
                       byte listType,
@@ -96,6 +113,7 @@ public class ListRecord extends RealmObject {
         this.id = id;
         this.mName = name;
         this.mReasons = reasons;
+        this.mFaction = faction;
         this.mWhereSeen = whereSeen;
         this.mTimesCaught = timesCaught;
         this.mListType = listType;

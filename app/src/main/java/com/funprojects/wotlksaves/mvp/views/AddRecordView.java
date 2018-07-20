@@ -1,5 +1,7 @@
 package com.funprojects.wotlksaves.mvp.views;
 
+import android.support.annotation.Nullable;
+
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
@@ -11,6 +13,6 @@ import com.funprojects.wotlksaves.mvp.models.ListRecord;
 
 @StateStrategyType(AddToEndSingleStrategy.class)
 public interface AddRecordView extends MvpView {
-    void warnExists(String name);
-    void addToScreen(ListRecord record, byte listType);
+    void warnExists(ListRecord name);
+    void addToScreen(@Nullable ListRecord record, byte listType);
 }

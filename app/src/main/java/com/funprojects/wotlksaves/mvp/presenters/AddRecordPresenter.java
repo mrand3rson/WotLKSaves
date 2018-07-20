@@ -23,14 +23,16 @@ public class AddRecordPresenter extends MvpPresenter<AddRecordView> {
 
     public void addListRecord(Context context,
                               byte listType,
+                              boolean faction,
                               String nickname,
                               String... reason) {
-        ListRecord record = persistIfNotExists(context, listType, nickname, reason);
+        ListRecord record = persistIfNotExists(context, listType, faction, nickname, reason);
         getViewState().addToScreen(record, listType);
     }
 
     private ListRecord persistIfNotExists(Context context,
                                           byte listType,
+                                          boolean faction,
                                           String nickname,
                                           String... reasonsRaw) {
         RealmList<String> reasons = new RealmList<>();
@@ -51,6 +53,7 @@ public class AddRecordPresenter extends MvpPresenter<AddRecordView> {
             result = new ListRecord(
                     nickname,
                     reasons,
+                    faction,
                     instances,
                     1,
                     listType,
@@ -58,8 +61,14 @@ public class AddRecordPresenter extends MvpPresenter<AddRecordView> {
             );
             return result;
         } else {
-            getViewState().warnExists(result.getName());
-            return null;
+            getViewState().warnExists(result);
+            realm.beginTransaction();
+
+            result.getReasons().addAll(reasons);
+            result.incrementTimesSeen();
+
+            realm.commitTransaction();
+            return result;
         }
     }
 }

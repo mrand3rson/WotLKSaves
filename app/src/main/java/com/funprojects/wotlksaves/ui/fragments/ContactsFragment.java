@@ -3,6 +3,7 @@ package com.funprojects.wotlksaves.ui.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -20,11 +21,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.funprojects.wotlksaves.R;
+import com.funprojects.wotlksaves.mvp.models.ListRecord;
+import com.funprojects.wotlksaves.tools.SortTypes;
 import com.funprojects.wotlksaves.ui.activities.MainActivity;
 import com.funprojects.wotlksaves.ui.dialogs.SortContactsDialog;
-import com.funprojects.wotlksaves.tools.SortTypes;
-
-import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -116,23 +116,40 @@ public class ContactsFragment extends Fragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         final MenuItem menuItem = menu.findItem(R.id.action_search);
-        final SearchView searchView = menuItem.getActionView().findViewById(R.id.action_search);
+        menuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                getCurrentFragment().clearFilter();
+                return true;
+            }
 
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                return true;
+            }
+        });
+
+        final SearchView searchView = menuItem.getActionView().findViewById(R.id.action_search);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                if (!searchView.isIconified()) {
-                    searchView.setIconified(true);
-                }
-                menuItem.collapseActionView();
+//                if (!searchView.isIconified()) {
+//                    searchView.setIconified(true);
+//                }
+//                menuItem.collapseActionView();
 
-                getCurrentFragment().clearFilter();
+                //A.S. visual pause
+//                new Handler().postDelayed(() -> {
+                    getCurrentFragment().filterAdapterData(query);
+//                }, 500);
+
+//                getCurrentFragment().clearFilter();
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                getCurrentFragment().filterAdapterData(newText);
+
                 return false;
             }
         });
@@ -172,7 +189,7 @@ public class ContactsFragment extends Fragment {
     }
 
 
-    public void updateList(RealmList list) {
+    public void updateList(RealmList<ListRecord> list) {
         getCurrentFragment().updateList(list);
     }
 

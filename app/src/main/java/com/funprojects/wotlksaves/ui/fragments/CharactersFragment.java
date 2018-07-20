@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.funprojects.wotlksaves.R;
+import com.funprojects.wotlksaves.mvp.models.Account;
 import com.funprojects.wotlksaves.mvp.models.GameCharacter;
 import com.funprojects.wotlksaves.mvp.models.GameRealm;
 import com.funprojects.wotlksaves.mvp.presenters.CharactersPresenter;
@@ -25,11 +27,11 @@ import com.funprojects.wotlksaves.ui.activities.MainActivity;
 import com.funprojects.wotlksaves.ui.adapters.recyclers.CharacterAdapter;
 import com.funprojects.wotlksaves.ui.adapters.recyclers.VerticalSpaceItemDecoration;
 
-import java.util.List;
-
 import butterknife.BindDimen;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import io.realm.RealmList;
 
 import static com.funprojects.wotlksaves.tools.Constraints.ARG_REALM;
 
@@ -45,9 +47,6 @@ public class CharactersFragment extends MvpAppCompatFragment implements Characte
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-
-    @BindView(R.id.fab_add_character)
-    FloatingActionButton fab;
 
     @BindView(R.id.recycler)
     RecyclerView mRecycler;
@@ -106,16 +105,26 @@ public class CharactersFragment extends MvpAppCompatFragment implements Characte
 
     private void initRecycler() {
         if (mRecycler.getLayoutManager() == null) {
-            mRecycler.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+            mRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
             mRecycler.addItemDecoration(new VerticalSpaceItemDecoration(mVerticalSpacing));
         }
 
-        final List<GameCharacter> data = mPresenter.getCharacters(mRealm);
+        final RealmList<Account> data = mPresenter.getAccounts(mRealm);
         mAdapter = new CharacterAdapter(getActivity(), R.layout.recycler_characters_item, data);
         mRecycler.setAdapter(mAdapter);
 
         if (data.isEmpty()) {
             mWarning.setVisibility(View.VISIBLE);
         }
+    }
+
+    @OnClick(R.id.fab_add_character)
+    public void fillAddCharacterForm() {
+        ((MainActivity)getActivity()).openAddCharacterDialog();
+    }
+
+    public void updateCharactersList(GameCharacter character) {
+        mAdapter.addCharacter(character);
+        mWarning.setVisibility(View.INVISIBLE);
     }
 }

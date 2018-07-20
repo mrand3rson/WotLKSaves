@@ -42,7 +42,7 @@
         android:id="@+id/label_realm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/string_realm"
+        android:text="@string/label_realm"
         android:labelFor="@id/edit_realm"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="16dp" />

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginBottom="?attr/actionBarSize"
-    android:background="@color/colorWhitelistBackground"
+    android:background="@color/whitelist_background"
     tools:context="com.funprojects.wotlksaves.ui.fragments.ContactsWhitelistFragment">
 
     <android.support.v7.widget.RecyclerView

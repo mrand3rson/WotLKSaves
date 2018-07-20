@@ -1,6 +1,7 @@
 package com.funprojects.wotlksaves.ui.fragments;
 
 import com.arellomobile.mvp.MvpAppCompatFragment;
+import com.funprojects.wotlksaves.mvp.models.ListRecord;
 
 import io.realm.RealmList;
 
@@ -28,7 +29,7 @@ public abstract class TabFragment extends MvpAppCompatFragment {
 
     public abstract void addRecord();
 
-    public abstract void updateList(RealmList list);
+    public abstract void updateList(RealmList<ListRecord> list);
 
     public abstract void clearFilter();
 

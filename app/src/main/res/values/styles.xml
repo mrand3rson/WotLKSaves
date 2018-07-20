@@ -31,6 +31,17 @@
         <item name="android:windowNoTitle">false</item>
     </style>
 
+
+    <style name="SwitchCompatTheme" >
+        <item name="colorControlActivated">@color/selector_switch_faction</item>
+        <item name="colorControlNormal">@color/selector_switch_faction</item>
+        <!--<item name="android:colorControlNormal">@color/faction_alliance_color</item>-->
+    </style>
+
+    <style name="SwitchCompatStyle" >
+        <item name="thumbTint">@color/selector_switch_faction</item>
+        <item name="trackTint">@color/selector_switch_faction</item>
+    </style>
 </resources>
 
 

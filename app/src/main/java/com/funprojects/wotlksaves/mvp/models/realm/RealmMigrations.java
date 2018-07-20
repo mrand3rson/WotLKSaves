@@ -299,6 +299,51 @@ public class RealmMigrations implements RealmMigration {
                     .removeField("mBlacklistOld")
                     .removeField("mWhitelistOld");
         }
+
+        if (oldVersion < 13) {
+            schema.get("ListRecord")
+                    .addField("mFaction", Boolean.class, FieldAttribute.REQUIRED);
+        }
+
+        if (oldVersion < 14) {
+            schema.get("GameCharacter")
+                    .addField("mAccountId", long.class)
+                    .removeField("mAccountName");
+            schema.get("Account")
+                    .addField("mGameRealmId", long.class)
+                    .removeField("mGameRealmName");
+        }
+
+        if (oldVersion < 15) {
+            schema.get("GameRealm")
+                    .addRealmListField("mAccounts", schema.get("Account"));
+            schema.get("Account")
+                    .addRealmListField("mCharacters", schema.get("GameCharacter"));
+        }
+
+        if (oldVersion < 16) {
+            schema.get("Account")
+                    .removeField("mCharacters");
+            schema.get("GameRealm")
+                    .removeField("mAccounts");
+
+            schema.get("Account")
+                    .addRealmListField("mCharacters", schema.get("GameCharacter"));
+            schema.get("GameRealm")
+                    .addRealmListField("mAccounts", schema.get("Account"));
+        }
+
+        if (oldVersion < 17) {
+            schema.get("Account")
+                    .removeField("mCharacters");
+            schema.get("GameRealm")
+                    .removeField("mAccounts");
+
+            schema.get("Account")
+                    .addRealmListField("mCharacters", schema.get("GameCharacter"));
+            schema.get("GameRealm")
+                    .addRealmListField("mAccounts", schema.get("Account"));
+        }
     }
 
     private void moveListToNew(DynamicRealm realm,

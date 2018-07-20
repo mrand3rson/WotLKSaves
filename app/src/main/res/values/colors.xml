@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#FFFFD600</color>
-    <color name="colorPrimaryDark">#FFFFB300</color>
+    <color name="colorPrimaryDark">#ffb300</color>
     <color name="colorAccent">#0026ff</color>
 
     <color name="colorHint">@android:color/darker_gray</color>
-    <color name="colorBlacklistBackground">@android:color/darker_gray</color>
-    <color name="colorWhitelistBackground">@android:color/white</color>
+
+    <color name="blacklist_background">@android:color/darker_gray</color>
+    <color name="whitelist_background">@android:color/white</color>
 
     <color name="colorNavMenuChecked">#000000</color>
     <color name="colorNavMenuIconChecked">#000000</color>
@@ -14,16 +15,19 @@
 
     <color name="colorRecyclerCharsItemBackground">#e0e0e0</color>
 
-    <color name="color_mage">#90caf9</color>
-    <color name="color_warlock">#b39ddb</color>
+    <color name="faction_alliance_color">#0000ff</color>
+    <color name="faction_horde_color">#ff0000</color>
+
+    <color name="color_mage">#78f0f9</color>
+    <color name="color_warlock">#c1aaec</color>
     <color name="color_priest">#ffffff</color>
-    <color name="color_rogue">#eeff41</color>
+    <color name="color_rogue">#ffdd00</color>
     <color name="color_druid">#ffb300</color>
-    <color name="color_shaman">#3d5afe</color>
+    <color name="color_shaman">#3d40fe</color>
     <color name="color_hunter">#aed581</color>
     <color name="color_darkknight">#c62828</color>
     <color name="color_paladin">#f48fb1</color>
-    <color name="color_warrior">#b7955f</color>
+    <color name="color_warrior">#d4ab6b</color>
 
     <!--#827717-->
     <!--<color name="colorPrimary">#3F51B5</color>-->

@@ -37,7 +37,7 @@ public class ListRecordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public ArrayList<ListRecord> data;
 
     private boolean multiSelect = false;
-    private ArrayList<ListRecord> selectedItems = new ArrayList<ListRecord>();
+    private ArrayList<ListRecord> selectedItems = new ArrayList<>();
 
 
     public ListRecordsAdapter(Context context, int itemLayout, ArrayList<ListRecord> data) {
@@ -92,13 +92,13 @@ public class ListRecordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         switch (mItemLayout) {
             case R.layout.recycler_blacklist_item: {
-                checked = mContext.getResources().getColor(R.color.colorWhitelistBackground);
-                unchecked = mContext.getResources().getColor(R.color.colorBlacklistBackground);
+                checked = mContext.getResources().getColor(R.color.whitelist_background);
+                unchecked = mContext.getResources().getColor(R.color.blacklist_background);
                 break;
             }
             case R.layout.recycler_whitelist_item: {
-                checked = mContext.getResources().getColor(R.color.colorBlacklistBackground);
-                unchecked = mContext.getResources().getColor(R.color.colorWhitelistBackground);
+                checked = mContext.getResources().getColor(R.color.blacklist_background);
+                unchecked = mContext.getResources().getColor(R.color.whitelist_background);
                 break;
             }
             default:
@@ -158,14 +158,19 @@ public class ListRecordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             layoutView.setOnClickListener(view -> {
                 if (multiSelect) {
                     selectItemForAction(view, record);
+                } else {
+                    //TODO: action
                 }
             });
 
             nicknameView.setText(record.getName());
+            int factionColor = mContext.getResources().getColor(record.isHorde()?
+                    R.color.faction_horde_color:
+                    R.color.faction_alliance_color);
+            nicknameView.setTextColor(factionColor);
+
             counterView.setText(String.valueOf(record.getTimesSeen()));
-            seenButton.setOnClickListener(view -> {
-                openDialogBoard(record);
-            });
+            seenButton.setOnClickListener(view -> openDialogBoard(record));
 
             LinearLayout reasonsLayout = prepareReasonsLayout();
             layoutView.addView(reasonsLayout);
@@ -243,6 +248,11 @@ public class ListRecordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             });
 
             nicknameView.setText(record.getName());
+            int factionColor = mContext.getResources().getColor(record.isHorde()?
+                    R.color.faction_horde_color:
+                    R.color.faction_alliance_color);
+            nicknameView.setTextColor(factionColor);
+
             counterView.setText(String.valueOf(record.getTimesSeen()));
             seenButton.setOnClickListener(view -> {
                 openDialogBoard(record);

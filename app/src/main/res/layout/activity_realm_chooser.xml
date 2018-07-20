@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/server_chooser_title_margin_bottom"
         android:gravity="center"
-        android:text="@string/string_choose_a_realm"
+        android:text="@string/label_choose_a_realm"
         app:layout_constraintBottom_toTopOf="@id/game_realms" />
 
     <Spinner

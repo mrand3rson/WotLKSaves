@@ -41,15 +41,30 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
 
     public ArrayList<ListRecord> filterRecyclerItems(String text, int type) {
         ArrayList<ListRecord> filtered = new ArrayList<>();
-        for (ListRecord record: blackData) {
-            if (record.getName().toLowerCase()
-                    .contains(text.toLowerCase())) {
-                filtered.add(record);
+        if (type == ListTypes.BLACK) {
+            for (ListRecord record : blackData) {
+                if (isMatchingSearch(record, text)) {
+                    filtered.add(record);
+                }
+            }
+        } else {
+            for (ListRecord record : whiteData) {
+                if (isMatchingSearch(record, text)) {
+                    filtered.add(record);
+                }
             }
         }
         //sort filtered list
         //TODO: delete if causes performance issues
         return sort(filtered, type);
+    }
+
+    private boolean isMatchingSearch(ListRecord record, String text) {
+        String reasons = "";
+        for (String reason : record.getReasons())
+            reasons = reasons.concat(reason);
+        String recordData = record.getName().concat("; " + reasons);
+        return recordData.toLowerCase().contains(text.toLowerCase());
     }
 
     private ArrayList<ListRecord> sort(ArrayList<ListRecord> filtered, int type) {
@@ -67,6 +82,18 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
 
         if (comparator != null) {
             Collections.sort(filtered, comparator);
+//            Observable.fromIterable(filtered)
+//                    .sorted(comparator)
+//                    .subscribeOn(Schedulers.io())
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .subscribe(listRecord -> {
+//                        ((Activity)getViewState()).runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                sorted.add(listRecord);
+//                            }
+//                        });
+//                    });
         }
         return filtered;
     }

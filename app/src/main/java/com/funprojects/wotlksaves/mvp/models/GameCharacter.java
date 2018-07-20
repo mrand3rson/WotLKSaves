@@ -6,10 +6,13 @@ import android.os.Parcelable;
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
+
+import static com.funprojects.wotlksaves.tools.CharacterConstraints.DRAENEI;
 
 /**
  * Created by Andrei on 04.05.2018.
@@ -17,13 +20,13 @@ import io.realm.annotations.PrimaryKey;
 
 public class GameCharacter extends RealmObject implements Parcelable, ICharacter {
 
-    private long setIdIncremented() {
+    public static long setIdIncremented() {
         Realm realm = Realm.getDefaultInstance();
         boolean inOuterTransaction = realm.isInTransaction();
         if (!inOuterTransaction)
             realm.beginTransaction();
 
-        Number maxId = realm.where(this.getClass())
+        Number maxId = realm.where(GameCharacter.class)
                 .max("id");
 
         if (!inOuterTransaction)
@@ -58,11 +61,44 @@ public class GameCharacter extends RealmObject implements Parcelable, ICharacter
         return mSpec2;
     }
 
-    public String getAccountName() {
-        return mAccountName;
+
+    public void setNickname(String mNickname) {
+        this.mNickname = mNickname;
     }
-    public void bindToAccount(String accountName) {
-        this.mAccountName = accountName;
+
+    public void setRace(byte mGameRace) {
+        this.mGameRace = mGameRace;
+    }
+
+    public void setClass(byte mGameClass) {
+        this.mGameClass = mGameClass;
+    }
+
+    public void setLevel(byte mLevel) {
+        this.mLevel = mLevel;
+    }
+
+    public void setSpec1(byte mSpec1) {
+        this.mSpec1 = mSpec1;
+    }
+
+    public void setSpec2(byte mSpec2) {
+        this.mSpec2 = mSpec2;
+    }
+
+//    public String getAccountName() {
+//        return mAccountName;
+//    }
+//    public void bindToAccount(String accountName) {
+//        this.mAccountName = accountName;
+//    }
+
+    public long getAccountId() {
+        return mAccountId;
+    }
+
+    public void setAccountId(long accountId) {
+        this.mAccountId = accountId;
     }
 
     public Instances getSavedInstances() {
@@ -70,6 +106,10 @@ public class GameCharacter extends RealmObject implements Parcelable, ICharacter
     }
     public void bindSavedInstances(Instances newSavedInstances) {
         this.mSavedInstances = newSavedInstances;
+    }
+
+    public boolean isHordeFaction() {
+        return mGameRace > DRAENEI;
     }
 
     @PrimaryKey @Index
@@ -81,7 +121,7 @@ public class GameCharacter extends RealmObject implements Parcelable, ICharacter
     private byte mSpec1;
     private byte mSpec2;
 
-    private String mAccountName;
+    private long mAccountId;
     private Instances mSavedInstances;
 
 
@@ -94,7 +134,8 @@ public class GameCharacter extends RealmObject implements Parcelable, ICharacter
                          byte gameClass,
                          byte level,
                          byte spec1,
-                         byte spec2) {
+                         byte spec2,
+                         long accountId) {
         this.id = setIdIncremented();
         this.mNickname = nickname;
         this.mGameRace = gameRace;
@@ -102,20 +143,22 @@ public class GameCharacter extends RealmObject implements Parcelable, ICharacter
         this.mLevel = level;
         this.mSpec1 = spec1;
         this.mSpec2 = spec2;
+        this.mAccountId = accountId;
+//        this.mAccountName = accountName;
     }
 
-    public static List<GameCharacter> getCharacters(Account account) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-
-        RealmResults<GameCharacter> characterRealmResults =
-                realm.where(GameCharacter.class)
-                    .equalTo("mAccountName", account.getName())
-                    .findAll();
-
-        realm.commitTransaction();
-        return realm.copyFromRealm(characterRealmResults);
-    }
+//    public static RealmList<GameCharacter> getCharacters(Account account) {
+//        RealmList<GameCharacter> result = new RealmList<>();
+//        Realm realm = Realm.getDefaultInstance();
+//        realm.beginTransaction();
+//
+//        result.where()
+//                .equalTo("mAccountName", account.getName())
+//                .findAll();
+//
+//        realm.commitTransaction();
+//        return result;
+//    }
 
 
 
@@ -127,7 +170,7 @@ public class GameCharacter extends RealmObject implements Parcelable, ICharacter
         mLevel = in.readByte();
         mSpec1 = in.readByte();
         mSpec2 = in.readByte();
-        mAccountName = in.readString();
+        mAccountId = in.readLong();
         mSavedInstances = in.readParcelable(Instances.class.getClassLoader());
     }
 
@@ -157,7 +200,7 @@ public class GameCharacter extends RealmObject implements Parcelable, ICharacter
         parcel.writeByte(mLevel);
         parcel.writeByte(mSpec1);
         parcel.writeByte(mSpec2);
-        parcel.writeString(mAccountName);
+        parcel.writeLong(mAccountId);
         parcel.writeParcelable(mSavedInstances, 0);
     }
 }

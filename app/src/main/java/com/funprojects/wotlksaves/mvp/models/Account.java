@@ -1,8 +1,10 @@
 package com.funprojects.wotlksaves.mvp.models;
 
 import java.util.List;
+import java.util.Locale;
 
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 import io.realm.annotations.Ignore;
@@ -15,13 +17,13 @@ import io.realm.annotations.PrimaryKey;
 
 public class Account extends RealmObject {
 
-    private long setIdIncremented() {
+    public static long setIdIncremented() {
         Realm realm = Realm.getDefaultInstance();
         boolean inOuterTransaction = realm.isInTransaction();
         if (!inOuterTransaction)
             realm.beginTransaction();
 
-        Number maxId = realm.where(this.getClass())
+        Number maxId = realm.where(Account.class)
                 .max("id");
 
         if (!inOuterTransaction)
@@ -35,35 +37,60 @@ public class Account extends RealmObject {
     public String getName() {
         return mName;
     }
-    public String getGameRealmName() {
-        return mGameRealmName;
+
+    public void setName(String name) {
+        this.mName = name;
     }
+
+    public long getGameRealmId() {
+        return mGameRealmId;
+    }
+
+    public void setGameRealmId(long gameRealmId) {
+        this.mGameRealmId = gameRealmId;
+    }
+
+    //    public String getGameRealmName() {
+//        return mGameRealmName;
+//    }
 
     @PrimaryKey @Index
     public long id;
     private String mName;
-    private String mGameRealmName;
+    private long mGameRealmId;
+    private RealmList<GameCharacter> mCharacters;
 
     public Account() {
         id = setIdIncremented();
     }
 
-    public Account(String name, String gameRealmName) {
+    public Account(String name, long gameRealmId) {
         id = setIdIncremented();
         this.mName = name;
-        this.mGameRealmName = gameRealmName;
+        this.mGameRealmId = gameRealmId;
     }
 
-    public static List<Account> getAccounts(GameRealm gameRealm) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
+    @Override
+    public String toString() {
+        return String.format(Locale.getDefault(), "%s", mName);
+    }
 
-        RealmResults<Account> accountsRealmResults =
-                realm.where(Account.class)
-                        .equalTo("mGameRealmName", gameRealm.getName())
-                        .findAll();
+    public RealmList<GameCharacter> getCharacters() {
+        if (mCharacters == null || mCharacters.isEmpty()) {
+            mCharacters = new RealmList<>();
+            Realm realm = Realm.getDefaultInstance();
+            boolean inOuterTransaction = realm.isInTransaction();
+            if (!inOuterTransaction)
+                realm.beginTransaction();
 
-        realm.commitTransaction();
-        return realm.copyFromRealm(accountsRealmResults);
+            mCharacters.where()
+                    .equalTo("mAccountId", this.id)
+                    .findAll();
+//            mCharacters.addAll(currentChars);
+
+            if (!inOuterTransaction)
+                realm.commitTransaction();
+        }
+        return mCharacters;
     }
 }

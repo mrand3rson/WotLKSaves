@@ -10,7 +10,6 @@ import io.realm.annotations.PrimaryKey;
 
 public class Note extends RealmObject {
 
-    //TODO: uncomment when Notes are goin' to appear in the app
     private long setIdIncremented() {
         Realm realm = Realm.getDefaultInstance();
         boolean inOuterTransaction = realm.isInTransaction();

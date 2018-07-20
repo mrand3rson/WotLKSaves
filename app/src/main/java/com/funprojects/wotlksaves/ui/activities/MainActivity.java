@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -15,11 +16,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.funprojects.wotlksaves.R;
+import com.funprojects.wotlksaves.mvp.models.GameCharacter;
 import com.funprojects.wotlksaves.mvp.models.GameRealm;
 import com.funprojects.wotlksaves.mvp.models.ListRecord;
 import com.funprojects.wotlksaves.ui.dialogs.AddCharacterDialog;
 import com.funprojects.wotlksaves.ui.fragments.CharactersFragment;
 import com.funprojects.wotlksaves.ui.fragments.ContactsFragment;
+
+import java.util.Collections;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,7 +42,8 @@ public class MainActivity extends AppCompatActivity
     NavigationView mNavigationView;
 
     private GameRealm mGameRealm;
-    private ContactsFragment contactsFragment;
+    private CharactersFragment mCharactersFragment;
+    private ContactsFragment mContactsFragment;
 
     private ActionMode mActionMode;
 
@@ -103,16 +108,16 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_characters) {
-            CharactersFragment fragment = CharactersFragment.newInstance(mGameRealm);
+            mCharactersFragment = CharactersFragment.newInstance(mGameRealm);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, fragment)
+                    .replace(R.id.container, mCharactersFragment)
                     .commit();
         } else if (id == R.id.nav_find) {
             Toast.makeText(this, "NOT YET IMPLEMENTED", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_contacts) {
-            contactsFragment = new ContactsFragment();
+            mContactsFragment = new ContactsFragment();
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, contactsFragment)
+                    .replace(R.id.container, mContactsFragment)
                     .commit();
         } else if (id == R.id.nav_share_blacklist) {
             Toast.makeText(this, "NOT YET IMPLEMENTED", Toast.LENGTH_SHORT).show();
@@ -142,29 +147,46 @@ public class MainActivity extends AppCompatActivity
                 .commit();
     }
 
-    public void addToBlacklist(ListRecord record) {
+    public void addToBlacklist(@Nullable ListRecord record) {
         if (record != null) {
             Realm realm = Realm.getDefaultInstance();
             if (!realm.isInTransaction())
                 realm.beginTransaction();
 
-            mGameRealm.getBlacklist().add(record);
+            //TODO: check this logic
+            ListRecord sameRecord = mGameRealm.getBlacklist().where()
+                    .equalTo("mName", record.getName())
+                    .findFirst();
+            if (sameRecord == null) {
+                mGameRealm.getBlacklist().add(record);
+            } //else {
+//                int index = mGameRealm.getBlacklist().indexOf(sameRecord);
+//            }
 
             realm.commitTransaction();
-            contactsFragment.updateList(mGameRealm.getBlacklist());
+            mContactsFragment.updateList(mGameRealm.getBlacklist());
         }
     }
 
-    public void addToWhitelist(ListRecord record) {
+    public void addToWhitelist(@Nullable ListRecord record) {
         if (record != null) {
             Realm realm = Realm.getDefaultInstance();
-            if (!realm.isInTransaction())
+            boolean inOuterTransition = realm.isInTransaction();
+            if (!inOuterTransition)
                 realm.beginTransaction();
 
-            mGameRealm.getWhitelist().add(record);
+            ListRecord sameRecord = mGameRealm.getWhitelist().where()
+                    .equalTo("mName", record.getName())
+                    .findFirst();
+            if (sameRecord == null) {
+                mGameRealm.getWhitelist().add(record);
+            } //else {
+//                int index = mGameRealm.getWhitelist().indexOf(sameRecord);
+//            }
 
-            realm.commitTransaction();
-            contactsFragment.updateList(mGameRealm.getWhitelist());
+            if (!inOuterTransition)
+                realm.commitTransaction();
+            mContactsFragment.updateList(mGameRealm.getWhitelist());
         }
     }
 
@@ -176,5 +198,9 @@ public class MainActivity extends AppCompatActivity
         if (mActionMode != null) {
             mActionMode.finish();
         }
+    }
+
+    public void addCharacterToList(GameCharacter character) {
+        mCharactersFragment.updateCharactersList(character);
     }
 }

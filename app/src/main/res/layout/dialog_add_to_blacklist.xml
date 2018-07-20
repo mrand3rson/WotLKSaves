@@ -12,7 +12,7 @@
         android:id="@+id/label_nickname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/string_enter_nickname"
+        android:text="@string/label_enter_nickname"
         android:labelFor="@id/edit_server"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="16dp" />
@@ -28,7 +28,7 @@
         android:id="@+id/label_reason"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/string_enter_reason"
+        android:text="@string/label_enter_reason"
         android:labelFor="@id/edit_realm"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="16dp" />
@@ -42,6 +42,16 @@
         android:textColorHint="@color/colorHint"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="16dp" />
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/switch_faction"
+        style="@style/SwitchCompatStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_standart_margin"
+        android:checked="false"
+        android:text="@string/string_alliance"
+        android:theme="@style/SwitchCompatTheme" />
 
     <Button
         android:id="@+id/button_ok"

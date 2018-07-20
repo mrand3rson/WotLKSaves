@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,9 @@ public class AddRecordDialog extends MvpAppCompatDialogFragment
     @BindView(R.id.edit_reason)
     EditText mReasonView;
 
+    @BindView(R.id.switch_faction)
+    SwitchCompat mFactionView;
+
     @InjectPresenter
     AddRecordPresenter mPresenter;
 
@@ -63,6 +67,11 @@ public class AddRecordDialog extends MvpAppCompatDialogFragment
         } else if (getArguments().get(blackClassName) != null) {
             type = BLACK;
         }
+
+        mFactionView.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            buttonView.setText(isChecked? R.string.string_horde : R.string.string_alliance);
+        });
+
         return v;
     }
 
@@ -82,7 +91,7 @@ public class AddRecordDialog extends MvpAppCompatDialogFragment
             return;
         }
 
-        mPresenter.addListRecord(getActivity(), type, nickname, reason);
+        mPresenter.addListRecord(getActivity(), type, mFactionView.isChecked(), nickname, reason);
 
         this.dismiss();
     }
@@ -102,7 +111,10 @@ public class AddRecordDialog extends MvpAppCompatDialogFragment
     }
 
     @Override
-    public void warnExists(String name) {
-        Toast.makeText(getActivity(), name+" already exists", Toast.LENGTH_SHORT).show();
+    public void warnExists(ListRecord record) {
+        String message =
+                String.format("%1s seen before %2s times", record.getName(), record.getTimesSeen());
+
+        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
     }
 }

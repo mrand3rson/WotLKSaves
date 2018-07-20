@@ -10,6 +10,8 @@ import java.util.Locale;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.RealmResults;
+import io.realm.annotations.Ignore;
 import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
 
@@ -57,6 +59,7 @@ public class GameRealm extends RealmObject implements Parcelable {
                     oldRecord.id,
                     oldRecord.getName(),
                     oldRecord.getReasons(),
+                    getFactionFromReasons(oldRecord.getReasons()),
                     oldRecord.getWhereSeen(),
                     oldRecord.getTimesCaught(),
                     ListTypes.BLACK,
@@ -67,6 +70,11 @@ public class GameRealm extends RealmObject implements Parcelable {
         }
         realm.copyToRealm(mBlacklist);
     }
+
+    private boolean getFactionFromReasons(RealmList<String> reasons) {
+        return reasons.get(0).toLowerCase().startsWith("о ");
+    }
+
     public RealmList<ListRecord> getBlacklist() {
         if (mBlacklist == null || mBlacklist.isEmpty()) {
             mBlacklist = new RealmList<>();
@@ -107,15 +115,31 @@ public class GameRealm extends RealmObject implements Parcelable {
         }
         return mWhitelist;
     }
+    public RealmList<Account> getAccounts() {
+        if (mAccounts == null || mAccounts.isEmpty()) {
+            mAccounts = new RealmList<>();
+            Realm realm = Realm.getDefaultInstance();
+            boolean inOuterTransaction = realm.isInTransaction();
+            if (!inOuterTransaction)
+                realm.beginTransaction();
+
+            mAccounts.where()
+                    .equalTo("mGameRealmId", id)
+                    .findAll();
+//            mAccounts.addAll(results);
+            if (!inOuterTransaction)
+                realm.commitTransaction();
+        }
+        return mAccounts;
+    }
+
     @PrimaryKey @Index
     public long id;
     private String mName;
-
     private String mServerName;
     private RealmList<ListRecord> mBlacklist;
-
-
     private RealmList<ListRecord> mWhitelist;
+    private RealmList<Account> mAccounts;
 
 
     public GameRealm() {

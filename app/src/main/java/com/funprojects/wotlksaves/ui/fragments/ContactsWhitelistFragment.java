@@ -87,7 +87,7 @@ public class ContactsWhitelistFragment extends TabFragment
     }
 
     @Override
-    public void updateList(RealmList list) {
+    public void updateList(RealmList<ListRecord> list) {
         mPresenter.whiteData = list;
 
         mAdapter.data.clear();
@@ -99,12 +99,15 @@ public class ContactsWhitelistFragment extends TabFragment
     public void clearFilter() {
         mAdapter.data.clear();
         mAdapter.data.addAll(mPresenter.whiteData);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void filterAdapterData(String text) {
-        mAdapter.data = mPresenter.filterRecyclerItems(text, ListTypes.WHITE);
-        mAdapter.notifyDataSetChanged();
+        if (mAdapter.data != null) {
+            mAdapter.data = mPresenter.filterRecyclerItems(text, ListTypes.WHITE);
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override

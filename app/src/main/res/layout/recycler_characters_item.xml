@@ -1,36 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="@dimen/recycler_item_margin">
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/card"
-        android:layout_width="@dimen/characters_card_width"
-        android:layout_height="@dimen/characters_card_height"
-        app:cardBackgroundColor="@color/colorRecyclerCharsItemBackground">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+    <TextView
+        android:id="@+id/account_header"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/colorPrimaryDark"
+        android:gravity="center"
+        android:text="...Account name..." />
 
-            <TextView
-                android:id="@+id/level"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="80"
-                android:textSize="36sp" />
+    <GridLayout
+        android:id="@+id/characters_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/recycler_item_margin">
 
-            <TextView
-                android:id="@+id/black_nickname"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Нехта" />
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
+        <!--<android.support.v7.widget.CardView-->
+            <!--android:id="@+id/card"-->
+            <!--android:layout_width="@dimen/characters_card_width"-->
+            <!--android:layout_height="@dimen/characters_card_height"-->
+            <!--app:cardBackgroundColor="@color/colorRecyclerCharsItemBackground">-->
+
+            <!--<LinearLayout-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:orientation="vertical">-->
+
+                <!--<TextView-->
+                    <!--android:id="@+id/level"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="center_horizontal"-->
+                    <!--android:text="80"-->
+                    <!--android:textSize="36sp" />-->
+
+                <!--<TextView-->
+                    <!--android:id="@+id/nickname"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="Breakingbadd"-->
+                    <!--android:textSize="20sp" />-->
+            <!--</LinearLayout>-->
+        <!--</android.support.v7.widget.CardView>-->
+
+    </GridLayout>
 
 </LinearLayout>
