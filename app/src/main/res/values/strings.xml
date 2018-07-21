@@ -30,6 +30,8 @@
     <string name="string_nav_menu_choose_another_realm">Choose another realm…</string>
     <string name="string_nav_menu_exit">Exit</string>
 
+    <string name="string_choose_action">Choose action…</string>
+
 
     <string name="race_human">Human</string>
     <string name="race_dwarf">Dwarf</string>

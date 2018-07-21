@@ -2,6 +2,7 @@ package com.funprojects.wotlksaves.ui.fragments;
 
 
 import android.app.DialogFragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,6 +23,7 @@ import com.funprojects.wotlksaves.ui.activities.MainActivity;
 import com.funprojects.wotlksaves.ui.adapters.recyclers.ListRecordsAdapter;
 import com.funprojects.wotlksaves.ui.adapters.recyclers.VerticalSpaceItemDecoration;
 import com.funprojects.wotlksaves.ui.dialogs.AddRecordDialog;
+import com.funprojects.wotlksaves.ui.dialogs.RecordContextMenuDialog;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +38,10 @@ import io.realm.RealmList;
 public class ContactsWhitelistFragment extends TabFragment
         implements ContactsView {
 
+    public ContactsPresenter getPresenter() {
+        return mPresenter;
+    }
+
     @BindDimen(R.dimen.recycler_item_vertical_space)
     int mVerticalSpacing;
 
@@ -46,6 +52,8 @@ public class ContactsWhitelistFragment extends TabFragment
     @InjectPresenter
     ContactsPresenter mPresenter;
 
+    private MainActivity mActivity;
+
 
     public ContactsWhitelistFragment() {
 
@@ -54,6 +62,7 @@ public class ContactsWhitelistFragment extends TabFragment
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mActivity = (MainActivity) getActivity();
         View v = inflater.inflate(R.layout.fragment_contacts_whitelist, container, false);
         ButterKnife.bind(this, v);
         initRecycler();
@@ -62,13 +71,12 @@ public class ContactsWhitelistFragment extends TabFragment
 
     private void initRecycler() {
         if (mAdapter == null) {
-            MainActivity activity = (MainActivity) getActivity();
 
             ArrayList<ListRecord> whitelist = new ArrayList<>();
-            whitelist.addAll(mPresenter.getWhitelist(activity));
+            whitelist.addAll(mPresenter.getWhitelist(mActivity));
 
-            mAdapter = new ListRecordsAdapter(activity, R.layout.recycler_whitelist_item, whitelist);
-            mRecycler.setLayoutManager(new LinearLayoutManager(activity));
+            mAdapter = new ListRecordsAdapter(this, mActivity, R.layout.recycler_whitelist_item, whitelist);
+            mRecycler.setLayoutManager(new LinearLayoutManager(mActivity));
             mRecycler.addItemDecoration(new VerticalSpaceItemDecoration(mVerticalSpacing));
             mRecycler.setAdapter(mAdapter);
         }
@@ -87,23 +95,35 @@ public class ContactsWhitelistFragment extends TabFragment
     }
 
     @Override
-    public void updateList(RealmList<ListRecord> list) {
+    public void updateAdapterList(RealmList<ListRecord> list) {
         mPresenter.whiteData = list;
 
-        mAdapter.data.clear();
-        mAdapter.data.addAll(list);
+        refreshAdapterList();
         mAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void clearFilter() {
+    public void refreshAdapterList() {
+//        mAdapter.data.clear();
+//        mAdapter.data.addAll(mPresenter.whiteData);
+        if (mAdapter.data.size() < mPresenter.whiteData.size()) {
+            int index = mPresenter.whiteData.size()-1;
+            mAdapter.data.add(mPresenter.whiteData.get(index));
+
+            if (!sortAdapterList(mPresenter.currentWhiteComparator))
+                mAdapter.notifyItemInserted(index);
+        }
+    }
+
+    @Override
+    public void clearAdapterFilter() {
         mAdapter.data.clear();
         mAdapter.data.addAll(mPresenter.whiteData);
         mAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void filterAdapterData(String text) {
+    public void filterAdapterList(String text) {
         if (mAdapter.data != null) {
             mAdapter.data = mPresenter.filterRecyclerItems(text, ListTypes.WHITE);
             mAdapter.notifyDataSetChanged();
@@ -111,7 +131,7 @@ public class ContactsWhitelistFragment extends TabFragment
     }
 
     @Override
-    public void sortAdapterData(int sortType) {
+    public void sortAdapterList(int sortType) {
         Comparator<ListRecord> comparator =
                 ContactsSortEngine.getComparatorByType(sortType);
 
@@ -120,5 +140,41 @@ public class ContactsWhitelistFragment extends TabFragment
             mAdapter.notifyDataSetChanged();
         }
         mPresenter.currentWhiteComparator = comparator;
+    }
+
+    public boolean sortAdapterList(Comparator<ListRecord> comparator) {
+        if (comparator != null) {
+            Collections.sort(mAdapter.data, comparator);
+            mAdapter.notifyDataSetChanged();
+
+            mPresenter.currentWhiteComparator = comparator;
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        int action = data.getIntExtra(RecordContextMenuDialog.ARG_ACTION, -1);
+        int index = data.getIntExtra(RecordContextMenuDialog.ARG_INDEX, -1);
+        int adapterIndex = data.getIntExtra(RecordContextMenuDialog.ARG_ADAPTER_INDEX, -1);
+        switch (action) {
+            case -1: {
+                break;
+            }
+            default: {
+                mPresenter.moveToBlacklist(index, adapterIndex, mActivity);
+            }
+        }
+    }
+
+    @Override
+    public void onItemMoved(int adapterIndex) {
+        Toast.makeText(mActivity, "Moved to blacklist", Toast.LENGTH_SHORT).show();
+        mRecycler.removeViewAt(adapterIndex);
+        mAdapter.data.remove(adapterIndex);
+        mAdapter.notifyItemRemoved(adapterIndex);
     }
 }

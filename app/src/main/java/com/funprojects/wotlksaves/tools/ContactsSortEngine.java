@@ -1,6 +1,7 @@
 package com.funprojects.wotlksaves.tools;
 
-import com.funprojects.wotlksaves.mvp.models.BlacklistRecord;
+import android.support.annotation.Nullable;
+
 import com.funprojects.wotlksaves.mvp.models.ListRecord;
 
 import java.util.Comparator;
@@ -11,6 +12,7 @@ import java.util.Comparator;
 
 public class ContactsSortEngine {
 
+    @Nullable
     public static Comparator<ListRecord> getComparatorByType(int sortType) {
         Comparator<ListRecord> comparator = null;
         switch (sortType) {

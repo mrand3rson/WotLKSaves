@@ -2,6 +2,7 @@ package com.funprojects.wotlksaves.ui.fragments;
 
 import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.funprojects.wotlksaves.mvp.models.ListRecord;
+import com.funprojects.wotlksaves.mvp.presenters.ContactsPresenter;
 
 import io.realm.RealmList;
 
@@ -15,7 +16,12 @@ public abstract class TabFragment extends MvpAppCompatFragment {
         return mTabPosition;
     }
 
+    public ContactsPresenter getPresenter() {
+        return mPresenter;
+    }
+
     private int mTabPosition;
+    ContactsPresenter mPresenter;
 
 
     public TabFragment() {
@@ -28,12 +34,9 @@ public abstract class TabFragment extends MvpAppCompatFragment {
 
 
     public abstract void addRecord();
-
-    public abstract void updateList(RealmList<ListRecord> list);
-
-    public abstract void clearFilter();
-
-    public abstract void filterAdapterData(String text);
-
-    public abstract void sortAdapterData(int sortType);
+    public abstract void updateAdapterList(RealmList<ListRecord> list);
+    public abstract void refreshAdapterList();
+    public abstract void filterAdapterList(String text);
+    public abstract void clearAdapterFilter();
+    public abstract void sortAdapterList(int sortType);
 }

@@ -3,7 +3,6 @@ package com.funprojects.wotlksaves.ui.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -103,6 +102,9 @@ public class ContactsFragment extends Fragment {
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 ((MainActivity)getActivity()).finishActionMode();
+
+                TabFragment currentFragment = fragments[position];
+                currentFragment.refreshAdapterList();
             }
         });
         return v;
@@ -119,7 +121,7 @@ public class ContactsFragment extends Fragment {
         menuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                getCurrentFragment().clearFilter();
+                getCurrentFragment().clearAdapterFilter();
                 return true;
             }
 
@@ -140,10 +142,10 @@ public class ContactsFragment extends Fragment {
 
                 //A.S. visual pause
 //                new Handler().postDelayed(() -> {
-                    getCurrentFragment().filterAdapterData(query);
+                    getCurrentFragment().filterAdapterList(query);
 //                }, 500);
 
-//                getCurrentFragment().clearFilter();
+//                getCurrentFragment().clearAdapterFilter();
                 return false;
             }
 
@@ -177,7 +179,7 @@ public class ContactsFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         int sortType = data.getIntExtra(SortTypes.ARG_SORT_TYPE, -1);
-        getCurrentFragment().sortAdapterData(sortType);
+        getCurrentFragment().sortAdapterList(sortType);
     }
 
     @OnClick(R.id.fab_add_contact)
@@ -190,7 +192,7 @@ public class ContactsFragment extends Fragment {
 
 
     public void updateList(RealmList<ListRecord> list) {
-        getCurrentFragment().updateList(list);
+        getCurrentFragment().updateAdapterList(list);
     }
 
 

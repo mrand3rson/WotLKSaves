@@ -1,6 +1,7 @@
 package com.funprojects.wotlksaves.ui.adapters.recyclers;
 
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,7 +17,10 @@ import android.widget.Toast;
 
 import com.funprojects.wotlksaves.R;
 import com.funprojects.wotlksaves.mvp.models.ListRecord;
+import com.funprojects.wotlksaves.tools.ListTypes;
 import com.funprojects.wotlksaves.ui.activities.MainActivity;
+import com.funprojects.wotlksaves.ui.dialogs.RecordContextMenuDialog;
+import com.funprojects.wotlksaves.ui.fragments.TabFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,13 +38,15 @@ public class ListRecordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private final Context mContext;
     private final int mItemLayout;
+    private final TabFragment parentFragment;
     public ArrayList<ListRecord> data;
 
     private boolean multiSelect = false;
     private ArrayList<ListRecord> selectedItems = new ArrayList<>();
 
 
-    public ListRecordsAdapter(Context context, int itemLayout, ArrayList<ListRecord> data) {
+    public ListRecordsAdapter(TabFragment fragment, Context context, int itemLayout, ArrayList<ListRecord> data) {
+        this.parentFragment = fragment;
         this.mContext = context;
         this.mItemLayout = itemLayout;
         this.data = data;
@@ -117,9 +123,28 @@ public class ListRecordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
 
-    private void openDialogBoard(ListRecord record) {
+    private void openPlacesBoard(ListRecord record) {
         //TODO: open dialog to show instances' checkboxes
         Toast.makeText(mContext, "OOPS", Toast.LENGTH_SHORT).show();
+    }
+
+    private void openDialogMenu(ListRecord record, int adapterIndex) {
+        ArrayList<String> menuItems = new ArrayList<>();
+        List<ListRecord> originalList;
+        if (record.getListType() == ListTypes.BLACK) {
+            menuItems.add("Move to whitelist");
+            originalList = parentFragment.getPresenter().getBlacklist((MainActivity)mContext);
+        } else if (record.getListType() == ListTypes.WHITE) {
+            menuItems.add("Move to blacklist");
+            originalList = parentFragment.getPresenter().getWhitelist((MainActivity)mContext);
+        } else return;
+
+        RecordContextMenuDialog dialog = RecordContextMenuDialog.newInstance(menuItems, originalList.indexOf(record), adapterIndex);
+        dialog.setTargetFragment(parentFragment, 1);
+
+        ((AppCompatActivity)mContext).getSupportFragmentManager().beginTransaction()
+                .add(dialog, null)
+                .commit();
     }
 
 
@@ -159,7 +184,7 @@ public class ListRecordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 if (multiSelect) {
                     selectItemForAction(view, record);
                 } else {
-                    //TODO: action
+                    openDialogMenu(record, getAdapterPosition());
                 }
             });
 
@@ -170,7 +195,7 @@ public class ListRecordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             nicknameView.setTextColor(factionColor);
 
             counterView.setText(String.valueOf(record.getTimesSeen()));
-            seenButton.setOnClickListener(view -> openDialogBoard(record));
+            seenButton.setOnClickListener(view -> openPlacesBoard(record));
 
             LinearLayout reasonsLayout = prepareReasonsLayout();
             layoutView.addView(reasonsLayout);
@@ -244,6 +269,8 @@ public class ListRecordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             layoutView.setOnClickListener(view -> {
                 if (multiSelect) {
                     selectItemForAction(view, record);
+                } else {
+                    openDialogMenu(record, getAdapterPosition());
                 }
             });
 
@@ -255,7 +282,7 @@ public class ListRecordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             counterView.setText(String.valueOf(record.getTimesSeen()));
             seenButton.setOnClickListener(view -> {
-                openDialogBoard(record);
+                openPlacesBoard(record);
             });
 
             LinearLayout reasonsLayout = prepareReasonsLayout();

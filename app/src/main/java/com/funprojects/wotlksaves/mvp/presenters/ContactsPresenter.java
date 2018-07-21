@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import io.realm.Realm;
 import io.realm.RealmList;
 
 /**
@@ -96,6 +97,36 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
 //                    });
         }
         return filtered;
+    }
+
+    public void moveToBlacklist(int index, int adapterIndex, MainActivity activity) {
+        ListRecord record = whiteData.get(index);
+        if (record != null) {
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+
+            record.setListType(ListTypes.BLACK);
+            whiteData.remove(record);
+            getBlacklist(activity).add(record);
+
+            realm.commitTransaction();
+            getViewState().onItemMoved(adapterIndex);
+        }
+    }
+
+    public void moveToWhitelist(int index, int adapterIndex, MainActivity activity) {
+        ListRecord record = blackData.get(index);
+        if (record != null) {
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+
+            record.setListType(ListTypes.WHITE);
+            blackData.remove(record);
+            getWhitelist(activity).add(record);
+
+            realm.commitTransaction();
+            getViewState().onItemMoved(adapterIndex);
+        }
     }
 }
 

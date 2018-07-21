@@ -23,7 +23,7 @@ import static com.funprojects.wotlksaves.tools.SortTypes.ARG_SORT_TYPE;
 
 public class SortContactsDialog extends DialogFragment {
 
-    @BindView(R.id.lv)
+    @BindView(R.id.lv_menu)
     ListView lv;
 
 

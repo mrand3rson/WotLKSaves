@@ -5,7 +5,6 @@ import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
-import io.realm.annotations.Required;
 
 /**
  * Created by Andrei on 29.04.2018.
@@ -32,6 +31,10 @@ public class ListRecord extends RealmObject {
 
     public byte getListType() {
         return mListType;
+    }
+
+    public void setListType(byte listType) {
+        this.mListType = listType;
     }
 
     public boolean isHorde() {
