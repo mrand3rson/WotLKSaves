@@ -14,6 +14,9 @@
     <color name="colorNavMenuUnchecked">#bdbdbd</color>
 
     <color name="colorRecyclerCharsItemBackground">#e0e0e0</color>
+    <color name="color_recycler_chars_alliance_background">#9f0033ff</color>
+    <color name="color_recycler_chars_horde_background">#9fff1100</color>
+
 
     <color name="faction_alliance_color">#0000ff</color>
     <color name="faction_horde_color">#ff0000</color>

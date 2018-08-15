@@ -3,6 +3,7 @@ package com.funprojects.wotlksaves.mvp.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 
@@ -11,6 +12,8 @@ import io.realm.RealmObject;
  */
 
 public class Instances extends RealmObject implements Parcelable {
+
+    public final static byte WOTLK_RAIDS_COUNT = 22;
 
     public final static byte naxx10 = 0;
     public final static byte naxx25 = 1;
@@ -38,7 +41,25 @@ public class Instances extends RealmObject implements Parcelable {
 
 
     public Instances() {
+        saves = getClearSaves();
+    }
 
+    public static RealmList<Boolean> getClearSaves() {
+        RealmList<Boolean> saves = new RealmList<>();
+        Realm realm = Realm.getDefaultInstance();
+        boolean inOuterTransaction = realm.isInTransaction();
+        if (!inOuterTransaction) {
+            realm.beginTransaction();
+        }
+
+        for (int i = 0; i < Instances.WOTLK_RAIDS_COUNT; i++) {
+            saves.add(Boolean.FALSE);
+        }
+
+        if (!inOuterTransaction) {
+            realm.commitTransaction();
+        }
+        return saves;
     }
 
     public Instances(boolean naxx10, boolean naxx25,
@@ -76,7 +97,7 @@ public class Instances extends RealmObject implements Parcelable {
         saves.set(Instances.rs25h, rs25h);
     }
 
-    public int countCheckedInstances() {
+    public int countChecked() {
         int counter = 0;
         for (boolean b : saves) {
             if (b) counter++;
@@ -94,7 +115,10 @@ public class Instances extends RealmObject implements Parcelable {
     public void writeToParcel(Parcel parcel, int flag) {
         byte[] bytes = new byte[saves.size()];
         for (int i = 0; i < saves.size(); i++) {
-            bytes[i] = (saves.get(i) ? (byte)1: (byte)0);
+            Boolean item = saves.get(i);
+            if (item != null) {
+                bytes[i] = (item ? (byte) 1 : (byte) 0);
+            }
         }
         parcel.writeByteArray(bytes);
 

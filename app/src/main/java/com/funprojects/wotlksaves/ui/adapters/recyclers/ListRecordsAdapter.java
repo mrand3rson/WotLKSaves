@@ -1,5 +1,7 @@
 package com.funprojects.wotlksaves.ui.adapters.recyclers;
 
+import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
@@ -19,6 +21,7 @@ import com.funprojects.wotlksaves.R;
 import com.funprojects.wotlksaves.mvp.models.ListRecord;
 import com.funprojects.wotlksaves.tools.ListTypes;
 import com.funprojects.wotlksaves.ui.activities.MainActivity;
+import com.funprojects.wotlksaves.ui.dialogs.InstancesDialog;
 import com.funprojects.wotlksaves.ui.dialogs.RecordContextMenuDialog;
 import com.funprojects.wotlksaves.ui.fragments.TabFragment;
 
@@ -35,6 +38,9 @@ import io.realm.Realm;
  */
 
 public class ListRecordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    public final static int CODE_PLACES = 0;
+    public final static int CODE_MENU = 1;
 
     private final Context mContext;
     private final int mItemLayout;
@@ -125,22 +131,27 @@ public class ListRecordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private void openPlacesBoard(ListRecord record) {
         //TODO: open dialog to show instances' checkboxes
-        Toast.makeText(mContext, "OOPS", Toast.LENGTH_SHORT).show();
+        InstancesDialog dialog = InstancesDialog.newInstance(record.id);
+        dialog.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme_Dialog_Light);
+        ((AppCompatActivity)mContext).getSupportFragmentManager().beginTransaction()
+                .add(dialog, null)
+                .commit();
     }
 
     private void openDialogMenu(ListRecord record, int adapterIndex) {
+        MainActivity activity = (MainActivity) mContext;
         ArrayList<String> menuItems = new ArrayList<>();
         List<ListRecord> originalList;
         if (record.getListType() == ListTypes.BLACK) {
-            menuItems.add("Move to whitelist");
-            originalList = parentFragment.getPresenter().getBlacklist((MainActivity)mContext);
+            menuItems.add(activity.getString(R.string.string_move_to_whitelist));
+            originalList = parentFragment.getPresenter().getBlacklist(activity);
         } else if (record.getListType() == ListTypes.WHITE) {
-            menuItems.add("Move to blacklist");
-            originalList = parentFragment.getPresenter().getWhitelist((MainActivity)mContext);
+            menuItems.add(activity.getString(R.string.string_move_to_blacklist));
+            originalList = parentFragment.getPresenter().getWhitelist(activity);
         } else return;
 
         RecordContextMenuDialog dialog = RecordContextMenuDialog.newInstance(menuItems, originalList.indexOf(record), adapterIndex);
-        dialog.setTargetFragment(parentFragment, 1);
+        dialog.setTargetFragment(parentFragment, CODE_MENU);
 
         ((AppCompatActivity)mContext).getSupportFragmentManager().beginTransaction()
                 .add(dialog, null)
@@ -281,9 +292,7 @@ public class ListRecordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             nicknameView.setTextColor(factionColor);
 
             counterView.setText(String.valueOf(record.getTimesSeen()));
-            seenButton.setOnClickListener(view -> {
-                openPlacesBoard(record);
-            });
+            seenButton.setOnClickListener(view -> openPlacesBoard(record));
 
             LinearLayout reasonsLayout = prepareReasonsLayout();
             layoutView.addView(reasonsLayout);

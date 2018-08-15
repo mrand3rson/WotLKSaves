@@ -48,7 +48,6 @@ public class AddRecordPresenter extends MvpPresenter<AddRecordView> {
         //if not exists then create new
         if (result == null) {
             Instances instances = new Instances();
-            instances.saves = new RealmList<>();
             MainActivity activity = (MainActivity) context;
             result = new ListRecord(
                     nickname,

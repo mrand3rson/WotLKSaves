@@ -22,6 +22,7 @@ import com.funprojects.wotlksaves.ui.activities.MainActivity;
 import com.funprojects.wotlksaves.ui.adapters.recyclers.ListRecordsAdapter;
 import com.funprojects.wotlksaves.ui.adapters.recyclers.VerticalSpaceItemDecoration;
 import com.funprojects.wotlksaves.ui.dialogs.AddRecordDialog;
+import com.funprojects.wotlksaves.ui.dialogs.InstancesDialog;
 import com.funprojects.wotlksaves.ui.dialogs.RecordContextMenuDialog;
 
 import java.util.ArrayList;
@@ -156,22 +157,29 @@ public class ContactsBlacklistFragment extends TabFragment
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        int action = data.getIntExtra(RecordContextMenuDialog.ARG_ACTION, -1);
-        int index = data.getIntExtra(RecordContextMenuDialog.ARG_INDEX, -1);
-        int adapterIndex = data.getIntExtra(RecordContextMenuDialog.ARG_ADAPTER_INDEX, -1);
-        switch (action) {
-            case -1: {
+        switch (requestCode) {
+            case 0: {
+                int action = data.getIntExtra(RecordContextMenuDialog.ARG_ACTION, -1);
+                int index = data.getIntExtra(RecordContextMenuDialog.ARG_INDEX, -1);
+                int adapterIndex = data.getIntExtra(RecordContextMenuDialog.ARG_ADAPTER_INDEX, -1);
+                switch (action) {
+                    case -1: {
+                        //TODO: log movement failed
+                        break;
+                    }
+                    default: {
+                        mPresenter.moveToWhitelist(index, adapterIndex, mActivity);
+                    }
+                }
+
                 break;
-            }
-            default: {
-                mPresenter.moveToWhitelist(index, adapterIndex, mActivity);
             }
         }
     }
 
     @Override
     public void onItemMoved(int adapterIndex) {
-        Toast.makeText(mActivity, "Moved to whitelist", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mActivity, R.string.string_moved_to_whitelist, Toast.LENGTH_SHORT).show();
         mRecycler.removeViewAt(adapterIndex);
         mAdapter.data.remove(adapterIndex);
         mAdapter.notifyItemRemoved(adapterIndex);

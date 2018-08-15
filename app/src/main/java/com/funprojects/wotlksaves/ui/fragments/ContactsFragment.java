@@ -34,7 +34,6 @@ import io.realm.RealmList;
 public class ContactsFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final int TABS_COUNT = 2;
-    private String mParam1;
     private TabFragment[] fragments = new TabFragment[TABS_COUNT];
 
     @BindView(R.id.pager)
@@ -58,22 +57,6 @@ public class ContactsFragment extends Fragment {
 
     }
 
-    public static ContactsFragment newInstance(String param1, String param2) {
-        ContactsFragment fragment = new ContactsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-        }
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -91,6 +74,7 @@ public class ContactsFragment extends Fragment {
                 activity, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getActivity().getSupportFragmentManager());
         mViewPager.setAdapter(mSectionsPagerAdapter);

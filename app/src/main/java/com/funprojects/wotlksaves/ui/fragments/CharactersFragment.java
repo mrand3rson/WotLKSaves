@@ -110,7 +110,7 @@ public class CharactersFragment extends MvpAppCompatFragment implements Characte
         }
 
         final RealmList<Account> data = mPresenter.getAccounts(mRealm);
-        mAdapter = new CharacterAdapter(getActivity(), R.layout.recycler_characters_item, data);
+        mAdapter = new CharacterAdapter(getActivity(), R.layout.recycler_characters_item, data, mRecycler);
         mRecycler.setAdapter(mAdapter);
 
         if (data.isEmpty()) {

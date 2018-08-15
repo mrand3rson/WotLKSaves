@@ -1,8 +1,10 @@
 package com.funprojects.wotlksaves.ui.adapters.recyclers;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Handler;
 import android.provider.ContactsContract;
+import android.support.transition.TransitionManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
@@ -41,17 +43,20 @@ public class CharacterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private final static int TYPE_DATA = 1;
     private final static int TYPE_ADD = 2;
+
     private final int mResource;
     private final RealmList<Account> mData;
-    private ArrayList<DataViewHolder> holders;
     private final Context mContext;
+    private final RecyclerView recyclerView;
+    private ArrayList<DataViewHolder> holders;
 
 
-    public CharacterAdapter(Context context, int mResource, RealmList<Account> mData) {
+    public CharacterAdapter(Context context, int mResource, RealmList<Account> mData, RecyclerView view) {
         this.mContext = context;
         this.mResource = mResource;
         this.mData = mData;
         this.holders = new ArrayList<>(mData.size());
+        this.recyclerView = view;
     }
 
     @Override
@@ -125,20 +130,14 @@ public class CharacterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         @BindDimen(R.dimen.characters_card_height)
         int cardHeight;
 
-        @BindColor(R.color.colorRecyclerCharsItemBackground)
-        int cardColor;
+        @BindColor(R.color.color_recycler_chars_alliance_background)
+        int cardColorAlliance;
+
+        @BindColor(R.color.color_recycler_chars_horde_background)
+        int cardColorHorde;
 
         @BindView(R.id.account_header)
         TextView mHeader;
-
-//        @BindView(R.id.card)
-//        CardView card;
-//
-//        @BindView(R.id.nickname)
-//        TextView mNicknameView;
-//
-//        @BindView(R.id.level)
-//        TextView mLevelView;
 
         @BindView(R.id.characters_layout)
         GridLayout mDetails;
@@ -172,16 +171,8 @@ public class CharacterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     fillAccountLayout(account);
                     notifyDataSetChanged();
                 }
-//                TransitionManager.beginDelayedTransition(recyclerView);
+                TransitionManager.beginDelayedTransition(recyclerView);
             });
-
-
-//            mNicknameView.setText(character.getNickname());
-//            mNicknameView.setTextColor(CharacterInfoProcessor.getClassColor(mContext, character.getGameClass()));
-//
-//            mLevelView.setText(String.valueOf(character.getLevel()));
-
-//            card.setOnClickListener(view -> Toast.makeText(mContext, "Add logic", Toast.LENGTH_SHORT).show());
         }
 
         private void fillAccountLayout(Account account) {
@@ -192,15 +183,15 @@ public class CharacterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
         }
 
-        public void addCharacterToView(GameCharacter character) {
+        void addCharacterToView(GameCharacter character) {
             LinearLayout.LayoutParams cardParams = new LinearLayout.LayoutParams(
                     cardWidth,
                     cardHeight);
             cardParams.setMargins(8, 8, 8, 8);
             CardView card = new CardView(mContext);
             card.setLayoutParams(cardParams);
-            card.setCardBackgroundColor(cardColor);
-            card.setRadius(4);
+            card.setCardBackgroundColor(character.isHordeFaction()? cardColorHorde: cardColorAlliance);
+            card.setRadius(80);
 
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -227,6 +218,7 @@ public class CharacterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     mContext.getResources().getColor(android.R.color.black));
             nicknameView.setTextColor(CharacterInfoProcessor.getClassColor(mContext, character.getGameClass()));
             nicknameView.setTextSize(20);
+            nicknameView.setTypeface(null, Typeface.BOLD);
 
             //adding views to layouts
             mDetails.addView(card);
@@ -237,6 +229,7 @@ public class CharacterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             card.setOnClickListener(view -> Toast.makeText(mContext, "Add logic", Toast.LENGTH_SHORT).show());
         }
     }
+    //TODO: safe delete class
     class AddViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.card)
@@ -252,9 +245,7 @@ public class CharacterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
 
         void bind() {
-            card.setOnClickListener(view -> {
-                ((MainActivity)mContext).openAddCharacterDialog();
-            });
+            card.setOnClickListener(view -> ((MainActivity)mContext).openAddCharacterDialog());
         }
     }
 }

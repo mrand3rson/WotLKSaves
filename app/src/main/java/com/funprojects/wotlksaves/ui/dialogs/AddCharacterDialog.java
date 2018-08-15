@@ -307,7 +307,7 @@ public class AddCharacterDialog extends MvpAppCompatDialogFragment
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.setTitle("ADDasdkfjkg");
+        dialog.setTitle(R.string.string_add_character);
         return dialog;
     }
 

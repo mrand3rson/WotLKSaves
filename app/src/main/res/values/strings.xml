@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">WotLK Saves</string>
+    <string name="subcat_header_characters">Characters</string>
+    <string name="subcat_header_contacts">Contacts</string>
+    <string name="subcat_header_find">Find a character</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -31,6 +34,9 @@
     <string name="string_nav_menu_exit">Exit</string>
 
     <string name="string_choose_action">Choose action…</string>
+    <string name="string_places">Places</string>
+    <string name="string_move_to_blacklist">Move to blacklist</string>
+    <string name="string_move_to_whitelist">Move to whitelist</string>
 
 
     <string name="race_human">Human</string>
@@ -114,6 +120,7 @@
     <string name="label_add_race_class">Race and class:</string>
     <string name="label_add_level">Level: %d</string>
     <string name="label_add_specs">Specs:</string>
+    <string name="string_add_character">Add character</string>
     <string name="label_create">Create</string>
 
     <string name="tab_text_1">Blacklist</string>
@@ -128,4 +135,27 @@
     <string name="string_alliance">Alliance</string>
     <string name="string_horde">Horde</string>
     <string name="no_spec">No spec</string>
+    <string name="string_moved_to_whitelist">Moved to whitelist</string>
+    <string name="string_instance_naxx_10">Naxx 10</string>
+    <string name="string_instance_naxx_25">Naxx 25</string>
+    <string name="string_instance_os_10">OS 10</string>
+    <string name="string_instance_os_25">OS 25</string>
+    <string name="string_instance_ulduar_10">Ulduar 10</string>
+    <string name="string_instance_ulduar_25">Ulduar 25</string>
+    <string name="string_instance_onyxia_10">Onyxia 10</string>
+    <string name="string_instance_onyxia_25">Onyxia 25</string>
+    <string name="string_instance_va_10">VA 10</string>
+    <string name="string_instance_va_25">VA 25</string>
+    <string name="string_instance_toc_10">ToC 10</string>
+    <string name="string_instance_togc_10">ToGC 10</string>
+    <string name="string_instance_toc_25">ToC 25</string>
+    <string name="string_instance_togc_25">ToGC 25</string>
+    <string name="string_instance_icc_10">ICC 10</string>
+    <string name="string_instance_icc_10h">ICC 10h</string>
+    <string name="string_instance_icc_25">ICC 25</string>
+    <string name="string_instance_icc_25h">ICC 25h</string>
+    <string name="string_instance_rs_10h">RS 10h</string>
+    <string name="string_instance_rs_10">RS 10</string>
+    <string name="string_instance_rs_25">RS 25</string>
+    <string name="string_instance_rs_25h">RS 25h</string>
 </resources>

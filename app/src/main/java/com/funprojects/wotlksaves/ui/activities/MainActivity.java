@@ -159,9 +159,7 @@ public class MainActivity extends AppCompatActivity
                     .findFirst();
             if (sameRecord == null) {
                 mGameRealm.getBlacklist().add(record);
-            } //else {
-//                int index = mGameRealm.getBlacklist().indexOf(sameRecord);
-//            }
+            }
 
             realm.commitTransaction();
             mContactsFragment.updateList(mGameRealm.getBlacklist());
@@ -180,9 +178,7 @@ public class MainActivity extends AppCompatActivity
                     .findFirst();
             if (sameRecord == null) {
                 mGameRealm.getWhitelist().add(record);
-            } //else {
-//                int index = mGameRealm.getWhitelist().indexOf(sameRecord);
-//            }
+            }
 
             if (!inOuterTransition)
                 realm.commitTransaction();

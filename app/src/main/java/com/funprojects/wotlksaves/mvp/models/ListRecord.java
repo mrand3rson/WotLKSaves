@@ -53,14 +53,23 @@ public class ListRecord extends RealmObject {
         return mReasons;
     }
 
-    public Instances getWhereSeen() {
+    public Instances getPlaces() {
         return mWhereSeen;
+    }
+    public void setPlaces(RealmList<Boolean> saves) {
+        if (mWhereSeen == null)
+            mWhereSeen = new Instances();
+        mWhereSeen.saves = saves;
+    }
+
+    public void setClearedPlaces() {
+        mWhereSeen = Realm.getDefaultInstance().createObject(Instances.class);
+        mWhereSeen.saves = Instances.getClearSaves();
     }
 
     public int getTimesSeen() {
         return mTimesCaught;
     }
-
     public void incrementTimesSeen() {
         mTimesCaught++;
     }

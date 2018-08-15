@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.funprojects.wotlksaves.R;
+import com.funprojects.wotlksaves.mvp.models.Instances;
 import com.funprojects.wotlksaves.mvp.models.ListRecord;
 import com.funprojects.wotlksaves.mvp.presenters.ContactsPresenter;
 import com.funprojects.wotlksaves.mvp.views.ContactsView;
@@ -23,11 +25,13 @@ import com.funprojects.wotlksaves.ui.activities.MainActivity;
 import com.funprojects.wotlksaves.ui.adapters.recyclers.ListRecordsAdapter;
 import com.funprojects.wotlksaves.ui.adapters.recyclers.VerticalSpaceItemDecoration;
 import com.funprojects.wotlksaves.ui.dialogs.AddRecordDialog;
+import com.funprojects.wotlksaves.ui.dialogs.InstancesDialog;
 import com.funprojects.wotlksaves.ui.dialogs.RecordContextMenuDialog;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import butterknife.BindDimen;
 import butterknife.BindView;
@@ -157,15 +161,22 @@ public class ContactsWhitelistFragment extends TabFragment
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        int action = data.getIntExtra(RecordContextMenuDialog.ARG_ACTION, -1);
-        int index = data.getIntExtra(RecordContextMenuDialog.ARG_INDEX, -1);
-        int adapterIndex = data.getIntExtra(RecordContextMenuDialog.ARG_ADAPTER_INDEX, -1);
-        switch (action) {
-            case -1: {
+        switch (requestCode) {
+            case ListRecordsAdapter.CODE_MENU: {
+                int action = data.getIntExtra(RecordContextMenuDialog.ARG_ACTION, -1);
+                int index = data.getIntExtra(RecordContextMenuDialog.ARG_INDEX, -1);
+                int adapterIndex = data.getIntExtra(RecordContextMenuDialog.ARG_ADAPTER_INDEX, -1);
+                switch (action) {
+                    case -1: {
+                        //TODO: log movement failed
+                        break;
+                    }
+                    default: {
+                        mPresenter.moveToBlacklist(index, adapterIndex, mActivity);
+                    }
+                }
+
                 break;
-            }
-            default: {
-                mPresenter.moveToBlacklist(index, adapterIndex, mActivity);
             }
         }
     }
