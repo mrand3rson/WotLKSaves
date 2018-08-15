@@ -20,24 +20,92 @@ import io.realm.RealmList;
 @InjectViewState
 public class ContactsPresenter extends MvpPresenter<ContactsView> {
 
-    public Comparator<ListRecord> currentBlackComparator;
-    public Comparator<ListRecord> currentWhiteComparator;
-    public RealmList<ListRecord> blackData;
-    public RealmList<ListRecord> whiteData;
-
-
-    public RealmList<ListRecord> getBlacklist(MainActivity activity) {
+    private RealmList<ListRecord> getBlacklist(MainActivity activity) {
         if (blackData == null) {
             blackData = activity.getGameRealm().getBlacklist();
         }
         return blackData;
     }
-
-    public RealmList<ListRecord> getWhitelist(MainActivity activity) {
+    private RealmList<ListRecord> getWhitelist(MainActivity activity) {
         if (whiteData == null) {
             whiteData = activity.getGameRealm().getWhitelist();
         }
         return whiteData;
+    }
+    public void setBlackData(RealmList<ListRecord> blackData) {
+        this.blackData = blackData;
+    }
+    public void setWhiteData(RealmList<ListRecord> whiteData) {
+        this.whiteData = whiteData;
+    }
+    private RealmList<ListRecord> blackData;
+    private RealmList<ListRecord> whiteData;
+
+    private Comparator<ListRecord> getBlackComparator() {
+        return blackComparator;
+    }
+    private Comparator<ListRecord> getWhiteComparator() {
+        return whiteComparator;
+    }
+    public Comparator<ListRecord> getComparator(int type) {
+        switch (type) {
+            case ListTypes.BLACK: {
+                return getBlackComparator();
+            }
+            case ListTypes.WHITE: {
+                return getWhiteComparator();
+            }
+            default: {
+                return null;
+            }
+        }
+    }
+    private void setBlackComparator(Comparator<ListRecord> blackComparator) {
+        this.blackComparator = blackComparator;
+    }
+    private void setWhiteComparator(Comparator<ListRecord> whiteComparator) {
+        this.whiteComparator = whiteComparator;
+    }
+    public void setComparator(Comparator<ListRecord> comparator, int type) {
+        switch (type) {
+            case ListTypes.BLACK: {
+                setBlackComparator(comparator);
+                break;
+            }
+            case ListTypes.WHITE: {
+                setWhiteComparator(comparator);
+                break;
+            }
+        }
+    }
+    private Comparator<ListRecord> blackComparator;
+    private Comparator<ListRecord> whiteComparator;
+
+
+    public RealmList<ListRecord> getList(MainActivity activity, int type) {
+        switch (type) {
+            case ListTypes.BLACK: {
+                return getBlacklist(activity);
+            }
+            case ListTypes.WHITE: {
+                return getWhitelist(activity);
+            }
+            default:
+                return null;
+        }
+    }
+    public void setList(RealmList<ListRecord> data, int type) {
+        switch (type) {
+            case ListTypes.BLACK: {
+                this.blackData = data;
+                break;
+            }
+            case ListTypes.WHITE: {
+                this.whiteData = data;
+                break;
+            }
+            default: {}
+        }
     }
 
     public ArrayList<ListRecord> filterRecyclerItems(String text, int type) {
@@ -69,17 +137,7 @@ public class ContactsPresenter extends MvpPresenter<ContactsView> {
     }
 
     private ArrayList<ListRecord> sort(ArrayList<ListRecord> filtered, int type) {
-        Comparator<ListRecord> comparator = null;
-        switch (type) {
-            case ListTypes.BLACK: {
-                comparator = currentBlackComparator;
-                break;
-            }
-            case ListTypes.WHITE: {
-                comparator = currentWhiteComparator;
-                break;
-            }
-        }
+        Comparator<ListRecord> comparator = getComparator(type);
 
         if (comparator != null) {
             Collections.sort(filtered, comparator);

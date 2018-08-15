@@ -32,7 +32,6 @@ import io.realm.RealmList;
 
 
 public class ContactsFragment extends Fragment {
-    private static final String ARG_PARAM1 = "param1";
     private static final int TABS_COUNT = 2;
     private TabFragment[] fragments = new TabFragment[TABS_COUNT];
 
@@ -86,6 +85,7 @@ public class ContactsFragment extends Fragment {
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 ((MainActivity)getActivity()).finishActionMode();
+
 
                 TabFragment currentFragment = fragments[position];
                 currentFragment.refreshAdapterList();
@@ -175,7 +175,7 @@ public class ContactsFragment extends Fragment {
     }
 
 
-    public void updateList(RealmList<ListRecord> list) {
+    public void updateViewList(RealmList<ListRecord> list) {
         getCurrentFragment().updateAdapterList(list);
     }
 

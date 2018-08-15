@@ -79,14 +79,17 @@ public class GameRealm extends RealmObject implements Parcelable {
         if (mBlacklist == null || mBlacklist.isEmpty()) {
             mBlacklist = new RealmList<>();
             Realm realm = Realm.getDefaultInstance();
-            realm.beginTransaction();
+            boolean inOuterTransaction = realm.isInTransaction();
+            if (!inOuterTransaction)
+                realm.beginTransaction();
 
             mBlacklist.where()
                     .equalTo("mGameRealmId", this.id)
                     .equalTo("mListType", ListTypes.BLACK)
                     .findAll();
 
-            realm.commitTransaction();
+            if (!inOuterTransaction)
+                realm.commitTransaction();
         }
         return mBlacklist;
     }
@@ -100,10 +103,7 @@ public class GameRealm extends RealmObject implements Parcelable {
             if (!inOuterTransaction) {
                 realm.beginTransaction();
             }
-//            RealmResults<WhitelistRecord> realmResults =
-//                    realm.where(WhitelistRecord.class)
-//                            .equalTo("mGameRealmId", this.id).findAll();
-//            mWhitelist.addAll(realmResults);
+
             mWhitelist.where()
                     .equalTo("mGameRealmId", this.id)
                     .equalTo("mListType", ListTypes.WHITE)
@@ -126,7 +126,7 @@ public class GameRealm extends RealmObject implements Parcelable {
             mAccounts.where()
                     .equalTo("mGameRealmId", id)
                     .findAll();
-//            mAccounts.addAll(results);
+
             if (!inOuterTransaction)
                 realm.commitTransaction();
         }

@@ -1,6 +1,5 @@
 package com.funprojects.wotlksaves.ui.adapters.recyclers;
 
-import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +14,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.funprojects.wotlksaves.R;
 import com.funprojects.wotlksaves.mvp.models.ListRecord;
@@ -33,14 +31,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
 
+import static com.funprojects.wotlksaves.ui.fragments.TabFragment.REQUEST_MOVE;
+
 /**
  * Created by Andrei on 21.05.2018.
  */
 
 public class ListRecordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-    public final static int CODE_PLACES = 0;
-    public final static int CODE_MENU = 1;
 
     private final Context mContext;
     private final int mItemLayout;
@@ -144,14 +141,14 @@ public class ListRecordsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         List<ListRecord> originalList;
         if (record.getListType() == ListTypes.BLACK) {
             menuItems.add(activity.getString(R.string.string_move_to_whitelist));
-            originalList = parentFragment.getPresenter().getBlacklist(activity);
+            originalList = parentFragment.mPresenter.getList(activity, parentFragment.getListType());
         } else if (record.getListType() == ListTypes.WHITE) {
             menuItems.add(activity.getString(R.string.string_move_to_blacklist));
-            originalList = parentFragment.getPresenter().getWhitelist(activity);
+            originalList = parentFragment.mPresenter.getList(activity, parentFragment.getListType());
         } else return;
 
         RecordContextMenuDialog dialog = RecordContextMenuDialog.newInstance(menuItems, originalList.indexOf(record), adapterIndex);
-        dialog.setTargetFragment(parentFragment, CODE_MENU);
+        dialog.setTargetFragment(parentFragment, REQUEST_MOVE);
 
         ((AppCompatActivity)mContext).getSupportFragmentManager().beginTransaction()
                 .add(dialog, null)

@@ -10,4 +10,5 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 @StateStrategyType(AddToEndSingleStrategy.class)
 public interface ContactsView extends MvpView {
     void onItemMoved(int adapterIndex);
+    void onItemAdded();
 }

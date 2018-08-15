@@ -23,8 +23,6 @@ import com.funprojects.wotlksaves.ui.dialogs.AddCharacterDialog;
 import com.funprojects.wotlksaves.ui.fragments.CharactersFragment;
 import com.funprojects.wotlksaves.ui.fragments.ContactsFragment;
 
-import java.util.Collections;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
@@ -162,7 +160,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             realm.commitTransaction();
-            mContactsFragment.updateList(mGameRealm.getBlacklist());
+            mContactsFragment.updateViewList(mGameRealm.getBlacklist());
         }
     }
 
@@ -182,7 +180,7 @@ public class MainActivity extends AppCompatActivity
 
             if (!inOuterTransition)
                 realm.commitTransaction();
-            mContactsFragment.updateList(mGameRealm.getWhitelist());
+            mContactsFragment.updateViewList(mGameRealm.getWhitelist());
         }
     }
 
