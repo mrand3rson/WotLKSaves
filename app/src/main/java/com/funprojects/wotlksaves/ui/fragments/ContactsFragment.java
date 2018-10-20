@@ -160,10 +160,16 @@ public class ContactsFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        int sortType = data.getIntExtra(SortTypes.ARG_SORT_TYPE, -1);
-        getCurrentFragment().sortAdapterList(sortType);
+        switch (requestCode) {
+            case SortTypes.REQUEST_SORT_TYPE: {
+                int sortType = data.getIntExtra(SortTypes.ARG_SORT_TYPE, -1);
+                getCurrentFragment().sortAdapterList(sortType);
+                break;
+            }
+            default: {
+                super.onActivityResult(requestCode, resultCode, data);
+            }
+        }
     }
 
     @OnClick(R.id.fab_add_contact)
@@ -177,6 +183,7 @@ public class ContactsFragment extends Fragment {
 
     public void updateViewList(RealmList<ListRecord> list) {
         getCurrentFragment().updateAdapterList(list);
+//        getCurrentFragment().onItemAdded();
     }
 
 

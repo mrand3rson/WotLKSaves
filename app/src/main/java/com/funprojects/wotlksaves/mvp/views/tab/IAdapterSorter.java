@@ -8,7 +8,6 @@ import io.realm.RealmList;
  * Created by Andrei on 15.08.2018.
  */
 
-public interface IAdapterUpdater {
-    void updateAdapterList(RealmList<ListRecord> list);
-    void refreshAdapterList();
+public interface IAdapterSorter {
+    void sortAdapterList(int sortType);
 }

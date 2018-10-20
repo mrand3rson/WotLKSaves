@@ -11,13 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.funprojects.wotlksaves.R;
 import com.funprojects.wotlksaves.mvp.models.ListRecord;
-import com.funprojects.wotlksaves.mvp.presenters.ContactsPresenter;
-import com.funprojects.wotlksaves.mvp.views.tab.ITab;
 import com.funprojects.wotlksaves.mvp.views.ContactsView;
-import com.funprojects.wotlksaves.tools.ContactsSortEngine;
 import com.funprojects.wotlksaves.tools.ListTypes;
 import com.funprojects.wotlksaves.ui.activities.MainActivity;
 import com.funprojects.wotlksaves.ui.adapters.recyclers.ListRecordsAdapter;
@@ -25,13 +21,12 @@ import com.funprojects.wotlksaves.ui.adapters.recyclers.VerticalSpaceItemDecorat
 import com.funprojects.wotlksaves.ui.dialogs.RecordContextMenuDialog;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 import butterknife.BindDimen;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.realm.RealmList;
+
+import static android.app.Activity.RESULT_OK;
 
 
 public class ContactsWhitelistFragment extends TabFragment
@@ -45,6 +40,7 @@ public class ContactsWhitelistFragment extends TabFragment
 
 
     public ContactsWhitelistFragment() {
+        setParentFragment(this);
         setListType(ListTypes.WHITE);
     }
 
@@ -71,21 +67,7 @@ public class ContactsWhitelistFragment extends TabFragment
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case TabFragment.REQUEST_MOVE: {
-                moveToBlack(data);
-                break;
-            }
-            case TabFragment.REQUEST_ADD_ITEM: {
-                onItemAdded();
-                break;
-            }
-        }
-    }
-
-    public void moveToBlack(Intent data) {
+    protected void moveTo(Intent data) {
         int action = data.getIntExtra(RecordContextMenuDialog.ARG_ACTION, -1);
         int index = data.getIntExtra(RecordContextMenuDialog.ARG_INDEX, -1);
         int adapterIndex = data.getIntExtra(RecordContextMenuDialog.ARG_ADAPTER_INDEX, -1);

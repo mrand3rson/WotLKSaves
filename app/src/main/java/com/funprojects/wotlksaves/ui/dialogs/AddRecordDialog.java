@@ -25,6 +25,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static android.app.Activity.RESULT_OK;
 import static com.funprojects.wotlksaves.tools.ListTypes.BLACK;
 import static com.funprojects.wotlksaves.tools.ListTypes.WHITE;
 
@@ -108,6 +109,7 @@ public class AddRecordDialog extends MvpAppCompatDialogFragment
                 break;
             }
         }
+        getTargetFragment().onActivityResult(getTargetRequestCode(), RESULT_OK, null);
     }
 
     @Override

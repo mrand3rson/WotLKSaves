@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.app.Activity.RESULT_OK;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -74,7 +76,7 @@ public class RecordContextMenuDialog extends DialogFragment {
             intent.putExtra(ARG_ACTION, i);
             intent.putExtra(ARG_INDEX, index);
             intent.putExtra(ARG_ADAPTER_INDEX, adapterIndex);
-            getTargetFragment().onActivityResult(1, 0, intent);
+            getTargetFragment().onActivityResult(getTargetRequestCode(), RESULT_OK, intent);
             dismiss();
         });
         return v;

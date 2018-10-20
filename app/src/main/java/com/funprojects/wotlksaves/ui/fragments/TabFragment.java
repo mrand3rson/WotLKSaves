@@ -1,6 +1,7 @@
 package com.funprojects.wotlksaves.ui.fragments;
 
 import android.app.DialogFragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
@@ -21,9 +22,13 @@ import java.util.Comparator;
 
 import io.realm.RealmList;
 
+import static android.app.Activity.RESULT_OK;
+
 /**
  * Created by Andrei on 15.05.2018.
  */
+
+//created non-abstract because of moxy presenter (one presenter for all tabs)
 public class TabFragment extends MvpAppCompatFragment implements ITab, ContactsView {
 
     public final static int REQUEST_MOVE = 1;
@@ -61,6 +66,32 @@ public class TabFragment extends MvpAppCompatFragment implements ITab, ContactsV
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case TabFragment.REQUEST_MOVE: {
+                switch (resultCode) {
+                    case RESULT_OK: {
+                        moveTo(data);
+                        break;
+                    }
+                }
+                break;
+            }
+            case TabFragment.REQUEST_ADD_ITEM: {
+                switch (resultCode) {
+                    case RESULT_OK: {
+                        onItemAdded();
+                        break;
+                    }
+                }
+                break;
+            }
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
     public void updateAdapterList(RealmList<ListRecord> list) {
         mPresenter.setList(list, getListType());
         refreshAdapterList();
@@ -77,6 +108,10 @@ public class TabFragment extends MvpAppCompatFragment implements ITab, ContactsV
             if (!sortAdapterList(mPresenter.getComparator(getListType())))
                 mAdapter.notifyItemInserted(index);
         }
+    }
+
+    protected void moveTo(Intent data) {
+        //stub. Implement in child fragment
     }
 
     @Override
@@ -104,8 +139,7 @@ public class TabFragment extends MvpAppCompatFragment implements ITab, ContactsV
         }
         mPresenter.setComparator(comparator, getListType());
     }
-    @Override
-    public boolean sortAdapterList(Comparator<ListRecord> comparator) {
+    private boolean sortAdapterList(Comparator<ListRecord> comparator) {
         if (comparator != null) {
             Collections.sort(mAdapter.data, comparator);
             mAdapter.notifyDataSetChanged();
@@ -117,13 +151,15 @@ public class TabFragment extends MvpAppCompatFragment implements ITab, ContactsV
         return false;
     }
 
+    //TODO: add itemchangelistener
+    //TODO: rework moveTo
 
     @Override
     public void onItemMoved(int adapterIndex) {
-
+        //stub. Implement in child fragment
     }
     @Override
     public void onItemAdded() {
-
+        //stub. Implement in child fragment
     }
 }

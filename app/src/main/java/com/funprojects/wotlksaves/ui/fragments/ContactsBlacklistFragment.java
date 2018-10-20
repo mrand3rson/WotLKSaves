@@ -11,9 +11,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.arellomobile.mvp.presenter.PresenterType;
 import com.funprojects.wotlksaves.R;
 import com.funprojects.wotlksaves.mvp.models.ListRecord;
-import com.funprojects.wotlksaves.mvp.presenters.ContactsPresenter;
 import com.funprojects.wotlksaves.mvp.views.ContactsView;
 import com.funprojects.wotlksaves.tools.ListTypes;
 import com.funprojects.wotlksaves.ui.activities.MainActivity;
@@ -27,6 +27,8 @@ import butterknife.BindDimen;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.app.Activity.RESULT_OK;
+
 
 public class ContactsBlacklistFragment extends TabFragment
         implements ContactsView {
@@ -39,6 +41,7 @@ public class ContactsBlacklistFragment extends TabFragment
 
 
     public ContactsBlacklistFragment() {
+        setParentFragment(this);
         setListType(ListTypes.BLACK);
     }
 
@@ -66,21 +69,7 @@ public class ContactsBlacklistFragment extends TabFragment
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case TabFragment.REQUEST_MOVE: {
-                moveToWhite(data);
-                break;
-            }
-            case TabFragment.REQUEST_ADD_ITEM: {
-                onItemAdded();
-                break;
-            }
-        }
-    }
-
-    private void moveToWhite(Intent data) {
+    protected void moveTo(Intent data) {
         int action = data.getIntExtra(RecordContextMenuDialog.ARG_ACTION, -1);
         int index = data.getIntExtra(RecordContextMenuDialog.ARG_INDEX, -1);
         int adapterIndex = data.getIntExtra(RecordContextMenuDialog.ARG_ADAPTER_INDEX, -1);
