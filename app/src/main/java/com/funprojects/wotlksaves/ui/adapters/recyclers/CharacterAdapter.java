@@ -2,8 +2,6 @@ package com.funprojects.wotlksaves.ui.adapters.recyclers;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.os.Handler;
-import android.provider.ContactsContract;
 import android.support.transition.TransitionManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -130,11 +128,14 @@ public class CharacterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         @BindDimen(R.dimen.characters_card_height)
         int cardHeight;
 
+        @BindColor(R.color.colorRecyclerCharsItemBackground)
+        int cardColor;
+
         @BindColor(R.color.color_recycler_chars_alliance_background)
-        int cardColorAlliance;
+        int colorAlliance;
 
         @BindColor(R.color.color_recycler_chars_horde_background)
-        int cardColorHorde;
+        int colorHorde;
 
         @BindView(R.id.account_header)
         TextView mHeader;
@@ -190,7 +191,8 @@ public class CharacterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             cardParams.setMargins(8, 8, 8, 8);
             CardView card = new CardView(mContext);
             card.setLayoutParams(cardParams);
-            card.setCardBackgroundColor(character.isHordeFaction()? cardColorHorde: cardColorAlliance);
+            //A.S. replaced with level color
+            card.setCardBackgroundColor(cardColor);
             card.setRadius(80);
 
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
@@ -209,6 +211,7 @@ public class CharacterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             TextView levelView = new TextView(mContext);
             levelView.setLayoutParams(levelNicknameParams);
             levelView.setText(String.valueOf(character.getLevel()));
+            levelView.setTextColor(character.isHordeFaction()? colorHorde : colorAlliance);
             levelView.setTextSize(36);
 
             TextView nicknameView = new TextView(mContext);
