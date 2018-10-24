@@ -207,18 +207,19 @@
             android:orientation="horizontal">
 
             <CheckBox
+                android:id="@+id/check_rs10"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/string_instance_rs_10" />
+
+            <CheckBox
                 android:id="@+id/check_rs10h"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/string_instance_rs_10h" />
 
-            <CheckBox
-                android:id="@+id/check_rs10"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/string_instance_rs_10" />
         </LinearLayout>
 
         <LinearLayout
