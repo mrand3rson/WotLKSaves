@@ -20,6 +20,10 @@ import com.funprojects.wotlksaves.ui.dialogs.AddRecordDialog;
 import java.util.Collections;
 import java.util.Comparator;
 
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import io.realm.RealmList;
 
 import static android.app.Activity.RESULT_OK;
@@ -117,6 +121,15 @@ public class TabFragment extends MvpAppCompatFragment implements ITab, ContactsV
     @Override
     public void filterAdapterList(String text) {
         if (mAdapter.data != null) {
+//            Observable.fromIterable(mAdapter.data)
+//                    .observeOn(Schedulers.newThread())
+//                    .subscribeOn(AndroidSchedulers.mainThread())
+//                    .filter(listRecord -> {
+//                        String nameLower = listRecord.getName().toLowerCase();
+//                        String reasonLower = listRecord.getReasons().toString().toLowerCase();
+//                        return nameLower.contains(...) || reasonLower.contains(...)
+//                    })
+//                    .subscribe();
             mAdapter.data = mPresenter.filterRecyclerItems(text, getListType());
             mAdapter.notifyDataSetChanged();
         }

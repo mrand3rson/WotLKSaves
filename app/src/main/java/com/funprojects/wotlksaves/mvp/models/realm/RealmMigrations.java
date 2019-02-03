@@ -295,17 +295,23 @@ public class RealmMigrations implements RealmMigration {
         }
 
         if (oldVersion < 12) {
+            Log.d(LOG_TAG, "updating to 12");
+
             schema.get("GameRealm")
                     .removeField("mBlacklistOld")
                     .removeField("mWhitelistOld");
         }
 
         if (oldVersion < 13) {
+            Log.d(LOG_TAG, "updating to 13");
+
             schema.get("ListRecord")
                     .addField("mFaction", Boolean.class, FieldAttribute.REQUIRED);
         }
 
         if (oldVersion < 14) {
+            Log.d(LOG_TAG, "updating to 14");
+
             schema.get("GameCharacter")
                     .addField("mAccountId", long.class)
                     .removeField("mAccountName");
@@ -315,6 +321,8 @@ public class RealmMigrations implements RealmMigration {
         }
 
         if (oldVersion < 15) {
+            Log.d(LOG_TAG, "updating to 15");
+
             schema.get("GameRealm")
                     .addRealmListField("mAccounts", schema.get("Account"));
             schema.get("Account")
@@ -322,6 +330,8 @@ public class RealmMigrations implements RealmMigration {
         }
 
         if (oldVersion < 16) {
+            Log.d(LOG_TAG, "updating to 16");
+
             schema.get("Account")
                     .removeField("mCharacters");
             schema.get("GameRealm")
@@ -334,6 +344,8 @@ public class RealmMigrations implements RealmMigration {
         }
 
         if (oldVersion < 17) {
+            Log.d(LOG_TAG, "updating to 17");
+
             schema.get("Account")
                     .removeField("mCharacters");
             schema.get("GameRealm")

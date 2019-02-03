@@ -1,9 +1,14 @@
 package com.funprojects.wotlksaves.ui.activities;
 
+import android.Manifest;
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -15,6 +20,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.funprojects.wotlksaves.R;
 import com.funprojects.wotlksaves.mvp.models.GameRealm;
 import com.funprojects.wotlksaves.mvp.models.Server;
+import com.funprojects.wotlksaves.mvp.models.realm.RealmRestorer;
 import com.funprojects.wotlksaves.mvp.presenters.RealmChooserPresenter;
 import com.funprojects.wotlksaves.mvp.views.ServerChooserView;
 import com.funprojects.wotlksaves.ui.adapters.spinners.RealmAdapter;
@@ -26,6 +32,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.funprojects.wotlksaves.mvp.models.realm.RealmRestorer.REQUEST_CODE_PERMISSION_STORAGE;
 import static com.funprojects.wotlksaves.tools.Constraints.ARG_REALM;
 
 
@@ -42,21 +49,53 @@ public class RealmChooserActivity extends MvpActivity implements ServerChooserVi
     @InjectPresenter
     RealmChooserPresenter mPresenter;
 
+    private RealmRestorer mRestorer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_realm_chooser);
 
-        ButterKnife.bind(this);
+        mRestorer = new RealmRestorer(this);
+        if (!mRestorer.isInitCompleted()) {
+            int permissionStatus = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
+                mRestorer.restoreSchemaVersion();
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                }, REQUEST_CODE_PERMISSION_STORAGE);
+            }
+        } else {
+            ButterKnife.bind(this);
 
-        mRealmList = mPresenter.getGameRealms();
-        mAdapter = new RealmAdapter(this,
-                android.R.layout.simple_list_item_1,
-                mRealmList);
-        mGameRealmsSpinner.setAdapter(mAdapter);
-        if (mRealmList.isEmpty()) {
-            mButtonGo.setVisibility(View.GONE);
+            mRealmList = mPresenter.getGameRealms();
+            mAdapter = new RealmAdapter(this,
+                    android.R.layout.simple_list_item_1,
+                    mRealmList);
+            mGameRealmsSpinner.setAdapter(mAdapter);
+            if (mRealmList.isEmpty()) {
+                mButtonGo.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_PERMISSION_STORAGE: {
+                if (grantResults.length == 2
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    mRestorer.restoreSchemaVersion();
+                }
+                return;
+            }
+            default: {
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            }
         }
     }
 
